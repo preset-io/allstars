@@ -21,6 +21,10 @@ CI = "https://github.com/preset-io/estrella/actions"
 
 [project.optional-dependencies]
 test = ["pytest"]
+dev = ["Flake8-pyproject"]
+
+[project.entry-points."sqlalchemy.dialects"]
+estrella = "estrella.sql.dialect:EstrellaDialect"
 
 [tool.flake8]
 max-line-length = 90
