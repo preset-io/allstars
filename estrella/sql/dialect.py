@@ -6,6 +6,8 @@ from types import ModuleType
 from typing import Any, Dict, List, Optional, Tuple, TypedDict
 
 import sqlalchemy.types
+from sqlalchemy import inspect
+from sqlalchemy.engine import create_engine
 from sqlalchemy.engine.base import Connection as SqlaConnection
 from sqlalchemy.engine.default import DefaultDialect
 from sqlalchemy.engine.url import URL
@@ -144,9 +146,19 @@ class EstrellaDialect(DefaultDialect):
         **kw: Any,
     ) -> List[SQLAlchemyColumn]:
         """
-        Return information about columns.
+        Return all columns from all tables.
         """
-        return []
+        engine = create_engine(
+            self.database_uri,
+            connect_args=connection.engine.raw_connection().kwargs,
+        )
+        inspector = inspect(engine)
+        out = []
+        for table in inspector.get_table_names():
+            for column in inspector.get_columns(table):
+                column["name"] = f'{table}.{column["name"]}'
+                out.append(column)
+        return out
 
     def do_rollback(self, dbapi_connection: Connection) -> None:
         """

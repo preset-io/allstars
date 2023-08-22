@@ -11,6 +11,7 @@ from estrella.sql.dbapi.decorators import check_closed, check_result
 from estrella.sql.dbapi.exceptions import NotSupportedError
 from estrella.sql.dbapi.typing import Description
 from estrella.sql.dbapi.utils import escape_parameter
+from estrella.sql.transpile import transpile
 
 
 class Cursor:
@@ -21,9 +22,9 @@ class Cursor:
 
     def __init__(self, database_url: str, **kwargs: Any):
         # store a cursor from the actual database
-        engine = create_engine(database_url, connect_args=kwargs)
-        dbapi_conn = engine.raw_connection()
-        self._cursor = dbapi_conn.cursor()
+        self.engine = create_engine(database_url, connect_args=kwargs)
+        dbapi_connection = self.engine.raw_connection()
+        self._cursor = dbapi_connection.cursor()
 
         self.arraysize = 1
         self.closed = False
@@ -74,7 +75,8 @@ class Cursor:
             }
             operation %= escaped_parameters
 
-        # XXX transpile query
+        # transpile the query from a semantic layer query to an actual database query
+        operation = transpile(self.engine, operation)
 
         # execute query
         self._cursor.execute(operation)
