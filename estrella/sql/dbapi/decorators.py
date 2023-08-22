@@ -1,7 +1,6 @@
 """
 Decorators for the DB API 2.0 implementation.
 """
-# pylint: disable=invalid-name, unused-import
 
 from functools import wraps
 from typing import TYPE_CHECKING, Any, Callable, TypeVar, Union, cast

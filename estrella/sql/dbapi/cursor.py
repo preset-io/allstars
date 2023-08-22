@@ -1,12 +1,11 @@
 """
 An implementation of a DB API 2.0 cursor.
 """
-# pylint: disable=invalid-name
 
 import itertools
 from typing import Any, Dict, Iterator, List, Optional, Tuple
 
-from yarl import URL
+from sqlalchemy import create_engine
 
 from estrella.sql.dbapi.decorators import check_closed, check_result
 from estrella.sql.dbapi.exceptions import NotSupportedError
@@ -20,8 +19,11 @@ class Cursor:
     Connection cursor.
     """
 
-    def __init__(self, base_url: URL):
-        self.base_url = base_url
+    def __init__(self, database_url: str, **kwargs: Any):
+        # store a cursor from the actual database
+        engine = create_engine(database_url, connect_args=kwargs)
+        dbapi_conn = engine.raw_connection()
+        self._cursor = dbapi_conn.cursor()
 
         self.arraysize = 1
         self.closed = False
@@ -59,11 +61,13 @@ class Cursor:
         parameters: Optional[Dict[str, Any]] = None,
     ) -> "Cursor":
         """
-        Execute a query using the cursor.
+        Execute a query using a cursor from the actual database
         """
         self.description = None
         self._rowcount = -1
 
+        # we need to do the escaping ourselves because differnet drivers use different
+        # styles, but have to declare a single one
         if parameters:
             escaped_parameters = {
                 key: escape_parameter(value) for key, value in parameters.items()
@@ -71,11 +75,12 @@ class Cursor:
             operation %= escaped_parameters
 
         # XXX transpile query
-        # XXX execute query and read results
-        rows = []
 
-        self._results = (tuple(row) for row in rows)
-        # self.description = [...]
+        # execute query
+        self._cursor.execute(operation)
+
+        self._results = (tuple(row) for row in self._cursor)
+        self.description = self._cursor.description
 
         return self
 

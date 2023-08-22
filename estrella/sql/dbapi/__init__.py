@@ -1,7 +1,6 @@
 """
 An implementation of the DB API 2.0.
 """
-# pylint: disable=invalid-name, redefined-builtin
 
 from estrella.sql.dbapi.connection import connect
 from estrella.sql.dbapi.exceptions import (

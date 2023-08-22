@@ -5,21 +5,6 @@ Type annotations for the DB API 2.0 implementation.
 from enum import Enum
 from typing import List, Optional, Tuple
 
-# Cursor description
-Description = Optional[
-    List[
-        Tuple[
-            str,
-            ColumnType,
-            Optional[str],
-            Optional[str],
-            Optional[str],
-            Optional[str],
-            Optional[bool],
-        ]
-    ]
-]
-
 
 class ColumnType(str, Enum):
     """
@@ -55,3 +40,19 @@ class TypeEnum(str, Enum):
     NUMBER = "NUMBER"
     DATETIME = "DATETIME"
     UNKNOWN = "UNKNOWN"
+
+
+# Cursor description
+Description = Optional[
+    List[
+        Tuple[
+            str,
+            ColumnType,
+            Optional[str],
+            Optional[str],
+            Optional[str],
+            Optional[str],
+            Optional[bool],
+        ]
+    ]
+]
