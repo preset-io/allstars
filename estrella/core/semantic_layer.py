@@ -1,3 +1,5 @@
+import os
+
 from typing import Any, List, Literal, Optional
 from dataclasses import dataclass
 from estrella.models import SemanticLayerModel, RelationModel, ColumnModel
@@ -27,8 +29,13 @@ class Relation:
 
     relation_type: Literal["view", "table"]
 
+    @property
+    def key(self):
+        return f"{self.database_schema}.{self.reference}"
+
     def to_pydantic(self):
         return RelationModel(
+            key=self.key,
             database_schema=self.database_schema,
             reference=self.reference,
             relation_type=self.relation_type,
@@ -65,7 +72,7 @@ class SemanticLayer:
 
         # iterate over tables and views, and populate the relations attribute
         rels = [(s, "table") for s in tables] + [(s, "view") for s in views]
-        for name, relation_type in rels[:5]:
+        for name, relation_type in rels[:10]:
             print((name, relation_type))
             columns = inspector.get_columns(name, schema=schema)
             self.relations += [
@@ -75,3 +82,13 @@ class SemanticLayer:
     def to_pydantic(self):
         model = SemanticLayerModel(relations=[r.to_pydantic() for r in self.relations])
         return model
+
+    def compile_to_files(self):
+        BASE_FOLDER = "/tmp/estrella"
+
+        # should move to some project init thing
+        os.makedirs(os.path.join(BASE_FOLDER, 'relations'), exist_ok=True)
+
+        for rel in self.relations:
+            filename = os.path.join(BASE_FOLDER, 'relations', f"{rel.key}.yaml")
+            rel.to_pydantic().to_yaml_file(filename)

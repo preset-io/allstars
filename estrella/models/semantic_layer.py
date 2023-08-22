@@ -1,9 +1,20 @@
 from typing import Any, List, Literal, Optional
 
 from pydantic import BaseModel, Field, Json
+import yaml
 
 
-class _Object(BaseModel):
+class CustomModel(BaseModel):
+
+    def to_yaml(self) -> str:
+        return yaml.dump(self.dict())
+
+    def to_yaml_file(self, filename: str) -> None:
+        with open(filename, 'w') as file:
+            yaml.dump(self.dict(), file, sort_keys=False)
+
+
+class _Object(CustomModel):
     """Any object living in the SemanticLayer's menu"""
 
     key: str
@@ -11,21 +22,20 @@ class _Object(BaseModel):
     description: Optional[str] = None
 
 
-class ColumnModel(BaseModel):
+class ColumnModel(CustomModel):
     name: str
     data_type: str
 
 
-class RelationModel(BaseModel):
+class RelationModel(CustomModel):
     """A pointer to a physical table or a view"""
-
+    key: str
     # the database schema
     database_schema: str
     # the view_name or table_name
     reference: str
-    columns: List[ColumnModel]
-
     relation_type: Literal["view", "table"]
+    columns: List[ColumnModel]
 
 
 class _SelectExpressionModel(_Object):
@@ -70,12 +80,12 @@ class FolderModel(_Object):
     parent_folder_key: Optional[str] = None
 
 
-class QueryContextModel(BaseModel):
+class QueryContextModel(CustomModel):
     key: str
     joins: List[JoinModel] = []
 
 
-class SemanticLayerModel(BaseModel):
+class SemanticLayerModel(CustomModel):
     metrics: List[MetricModel] = []
     dimension: List[DimensionModel] = []
     joins: List[JoinModel] = []
