@@ -40,8 +40,7 @@ def transpile(engine: Engine, query: str) -> str:
                 fks = [
                     fk
                     for fk in inspector.get_foreign_keys(table_name=table)
-                    if fk["referred_table"]
-                    in tables  # and fk["referred_table"] != table
+                    if fk["referred_table"] in tables and fk["referred_table"] != table
                 ]
                 if not fks:
                     continue
