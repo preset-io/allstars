@@ -11,18 +11,24 @@ class _Object(BaseModel):
     description: Optional[str] = None
 
 
-class Relation(BaseModel):
+class ColumnModel(BaseModel):
+    name: str
+    data_type: str
+
+
+class RelationModel(BaseModel):
     """A pointer to a physical table or a view"""
 
     # the database schema
-    schema: str
+    database_schema: str
     # the view_name or table_name
     reference: str
+    columns: List[ColumnModel]
 
     relation_type: Literal["view", "table"]
 
 
-class _SelectExpression(_Object):
+class _SelectExpressionModel(_Object):
     """Private class for something that lives in a SELECT"""
 
     expression: str
@@ -32,19 +38,19 @@ class _SelectExpression(_Object):
     relation_keys: List[str]
 
 
-class Metric(_SqlExpression):
+class MetricModel(_SelectExpressionModel):
     """Just a good old metric"""
 
     pass
 
 
-class Dimension(_SelectExpression):
+class DimensionModel(_SelectExpressionModel):
     """A simple dimension"""
 
     pass
 
 
-class Filter(_SelectExpression):
+class FilterModel(_SelectExpressionModel):
     """
     A predefined filter that can be added to a WHERE clause
     """
@@ -52,7 +58,7 @@ class Filter(_SelectExpression):
     pass
 
 
-class Join(SqlObject):
+class JoinModel(_Object):
     left_relation_key: str
     right_relation_key: str
     join_criteria: str
@@ -60,21 +66,21 @@ class Join(SqlObject):
     join_term: Literal["JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER JOIN"]
 
 
-class Folder(_Object):
+class FolderModel(_Object):
     parent_folder_key: Optional[str] = None
 
 
-class QueryContext(BaseModel):
+class QueryContextModel(BaseModel):
     key: str
-    joins: List[Join] = []
+    joins: List[JoinModel] = []
 
 
-class SemanticLayer(BaseModel):
-    metrics: List[Metric] = []
-    dimension: List[Dimension] = []
-    joins: List[Join] = []
-    query_contexts: List[QueryContext] = []
-    folders: List[Filters] = []
-    filters: List[Filters] = []
+class SemanticLayerModel(BaseModel):
+    metrics: List[MetricModel] = []
+    dimension: List[DimensionModel] = []
+    joins: List[JoinModel] = []
+    query_contexts: List[QueryContextModel] = []
+    folders: List[FolderModel] = []
+    filters: List[FilterModel] = []
 
-    relations: List[Relation] = []
+    relations: List[RelationModel] = []
