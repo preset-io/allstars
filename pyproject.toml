@@ -1,0 +1,26 @@
+[project]
+name = "estrella"
+version = "0.0.1"
+description = "A Mostly Inferred + Progressively Adoptable Semantic Layer"
+readme = "README.md"
+authors = [{name = "Maxime Beauchemin"}, {name = "Beto Dealmeida"}]
+license = {text = "All rights reserved."}
+classifiers = [
+]
+dependencies = [
+    "pydantic",
+]
+requires-python = ">3.7"
+scripts = {estrella = "estrella.cli:run"}
+
+[project.urls]
+homepage = "https://github.com/preset-io/estrella"
+Changelog = "https://github.com/preset-io/estrella/releases"
+Issues = "https://github.com/preset-io/estrella/issues"
+CI = "https://github.com/preset-io/estrella/actions"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.flake8]
+max-line-length = 90
