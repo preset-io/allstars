@@ -13,10 +13,11 @@ class Project:
     BASE_FOLDER: str = "/tmp/estrella"
     SQLA_CON: str = "bigquery://preset-cloud-dev-dbt/core"
 
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.engine = create_engine(self.SQLA_CON, credentials_path="/Users/max/.dbt/dev-dbt.json")
+        self.engine = create_engine(
+            self.SQLA_CON, credentials_path="/Users/max/.dbt/dev-dbt.json"
+        )
 
     def load(self, database_schema=None):
         if database_schema:

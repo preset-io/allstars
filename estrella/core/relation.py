@@ -19,7 +19,6 @@ class Relation(Serializable):
     relation_type: Literal["view", "table"]
     columns: List[Column]
 
-
     @property
     def key(self):
         return f"{self.database_schema}.{self.reference}"

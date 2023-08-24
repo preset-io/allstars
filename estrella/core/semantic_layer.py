@@ -14,13 +14,13 @@ from estrella.core.base import Serializable
 @dataclass
 class SemanticLayer(Serializable):
     relations: Optional[List[Relation]] = field(default_factory=list)
-    # join
-    # metrics
-    # dimensions
-    # contexts
-    # filters
-    # hierarchies
-    # folders
+
+    metrics: List[Metric] = []
+    dimension: List[Dimension] = []
+    joins: List[Join] = []
+    query_contexts: List[QueryContext] = []
+    folders: List[Folder] = []
+    filters: List[Filter] = []
 
     def create_relation(self, name, relation_type, columns, schema):
         return Relation(
