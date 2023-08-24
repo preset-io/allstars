@@ -1,31 +1,33 @@
 import click
-from estrella.core import SemanticLayer
+from sqlalchemy import create_engine
+
+from estrella.core.project import Project
 
 @click.group()
 def cli():
     pass
 
+
 @click.command()
 @click.argument('schema')
 def extract(schema):
     click.echo(f'Extracting metadata from schema: {schema}')
-    sl = SemanticLayer()
 
-    from sqlalchemy import create_engine
-    conn = "bigquery://preset-cloud-dev-dbt/core"
-    eng = create_engine(conn, credentials_path="/Users/max/.dbt/dev-dbt.json")
-
-    sl = SemanticLayer()
-
-    sl.load_relations_from_schema(schema, eng)
-    sl.compile_to_files()
+    project = Project()
+    project.load(schema)
+    project.flush()
 
 
 @click.command()
 def read():
-    sl = SemanticLayer.from_folder()
+
+    project = Project()
+    project.load()
+    sl = project.semantic_layer
+    print(len(sl.relations))
     for rel in sl.relations:
-        print(rel.to_pydantic().to_yaml())
+        print(rel.to_yaml())
+
 
 cli.add_command(extract)
 cli.add_command(read)

@@ -1,80 +1,26 @@
 import glob
 import os
+import yaml
 
 from typing import Any, List, Literal, Optional
-from dataclasses import dataclass, field
-from estrella.models import SemanticLayerModel, RelationModel, ColumnModel
+from dataclasses import dataclass, field, asdict
+
 from sqlalchemy import MetaData, Table, inspect
 
-from pydantic import BaseModel, Field, Json
-
-BASE_FOLDER = "/tmp/estrella"
-
-class Pydanticable:
-    pydantic_model_class = None
-
-    def to_pydantic(self):
-        attrs = set(self.pydantic_model_class.__annotations__.keys())
-        kwargs = {attr: getattr(self, attr) for attr in attrs}
-        return self.pydantic_model_class(**kwargs)
-
-    @classmethod
-    def from_pydantic(cls, model):
-        attrs = list(cls.pydantic_model_class.__annotations__.keys())
-        kwargs = {attr: getattr(model, attr) for attr in attrs}
-        return cls(
-            name=model.name,
-            data_type=model.data_type,
-        )
+from estrella.core.relation import Column, Relation
+from estrella.core.base import Serializable
 
 
 @dataclass
-class Column(Pydanticable):
-    pydantic_model_class = ColumnModel
-
-    name: str
-    data_type: str
-
-
-@dataclass
-class Relation(Pydanticable):
-    """A pointer to a physical table or a view"""
-    pydantic_model_class = RelationModel
-
-
-    # the database schema
-    database_schema: str
-    # the view_name or table_name
-    reference: str
-    columns: List[Column]
-
-    relation_type: Literal["view", "table"]
-
-    @property
-    def key(self):
-        return f"{self.database_schema}.{self.reference}"
-
-    @classmethod
-    def from_pydantic(cls, model):
-        return cls(
-            database_schema=model.database_schema,
-            reference=model.reference,
-            relation_type=model.relation_type,
-            columns=[Column.from_pydantic(c) for c in model.columns],
-        )
-
-
-@dataclass
-class SemanticLayer:
+class SemanticLayer(Serializable):
     relations: Optional[List[Relation]] = field(default_factory=list)
-    #join
-    #metrics
-    #dimensions
-    #contexts
-    #filters
-    #hierarchies
-    #folders
-
+    # join
+    # metrics
+    # dimensions
+    # contexts
+    # filters
+    # hierarchies
+    # folders
 
     def create_relation(self, name, relation_type, columns, schema):
         return Relation(
@@ -98,33 +44,29 @@ class SemanticLayer:
 
         # iterate over tables and views, and populate the relations attribute
         rels = [(s, "table") for s in tables] + [(s, "view") for s in views]
-        for name, relation_type in rels[:10]:
+        for name, relation_type in rels[:5]:
             print((name, relation_type))
             columns = inspector.get_columns(name, schema=schema)
             self.relations += [
                 self.create_relation(name, relation_type, columns, schema)
             ]
 
-    def to_pydantic(self):
-        model = SemanticLayerModel(relations=[r.to_pydantic() for r in self.relations])
-        return model
-
-    def compile_to_files(self):
-
+    def compile_to_files(self, folder):
         # should move to some project init thing
-        os.makedirs(os.path.join(BASE_FOLDER, 'relations'), exist_ok=True)
+        os.makedirs(os.path.join(folder, "relations"), exist_ok=True)
 
         for rel in self.relations:
-            filename = os.path.join(BASE_FOLDER, 'relations', f"{rel.key}.yaml")
-            rel.to_pydantic().to_yaml_file(filename)
+            filename = os.path.join(folder, "relations", f"{rel.key}.yaml")
+            rel.to_yaml_file(filename)
 
     @classmethod
     def from_folder(cls, folder_path=None):
-        rel_folder = folder_path or os.path.join(BASE_FOLDER, 'relations')
-        yaml_files = glob.glob(f'{rel_folder}/*.yaml')
+        rel_folder = folder_path
+        yaml_files = glob.glob(f"{rel_folder}/*.yaml")
+        print(rel_folder)
         relations = []
         for file_path in yaml_files:
-            relations += [RelationModel.from_yaml_file(file_path)]
+            relations += [Relation.from_yaml_file(file_path)]
 
         return cls(
             relations=relations,
