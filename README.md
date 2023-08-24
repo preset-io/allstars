@@ -39,6 +39,96 @@ for source control (similar to how npm's `package-lock.json` is derived
 from a more dynamic `package.json`) or to a `_meta` meta table in
 a target database.
 
+# What's in an Estrella semantic layer?
+
+## Some internals`
+
+Opening up the hood, the semantic layer has the following internal
+representation of
+
+### Relations
+
+Relations, as pointers to physical **tables** and **views**, including
+the underlying **columns** along with their **data types**. The semantic
+layer is essentially a fancy rich map to get to these things.  Estrella
+has a full in-memory representation of all this to navigate it all.
+
+### Joins
+
+To complete the picture from the relations, we have a full map of which
+joins can be used against the underlying relations. Each join maps
+two relations, has a type of join assigned (left, right, full, outer, ...)
+and has its cardinality (one-to-one, one-to-many, many-to-one, ...).
+
+### Query contexts
+
+When semantic layers get big, it becomes large spaghetti plate of joins,
+and not all joins can be followed. The general goal is to start from a
+metric, and join it to it's dimension while avoiding "fan traps" where
+the metric gets duplicated while following a one-to-many join.
+
+Query contexts are effectively a collection of joins that can be used
+together safely to generate a query. In traditional dimensional modeling,
+where you have a collection of fact tables and dimension tables, you'll
+typically have one query context per fact table. In the case of a dimensional
+query where metrics from multiple fact tables are chosen along with
+shared dimensions, the semantic layer will resolve by generating multiple
+queries, each against a single query context, and merge the results.
+
+## Exposed to users
+
+The semantic layer is essentially a menu of user-relatable objects
+that act as a map to more complex set and more abstract set of physical
+database objects. Like on a restaurant menu, all of these objects
+are clearly organized in sections and sub-sections (**folders**),
+have nice **labels**, and longer **descriptions**.
+
+### Metric
+
+A metric is a simple aggregate SQL expression against one or many relations.
+It typically will point to a single relation but can in come cases span
+across relation and require a join to compute. Note that metrics
+can reference other metrics, in which case they become a more complex
+metric that inherits the underlying relations.
+
+### Dimension
+
+A dimension is a simple, non-aggregate SQL expression against one or
+many relations. Like metrics, they typically a built on top of a single
+relation but not always.
+
+Note that we made the decision to use the term dimension even though
+it can be confused with the idea of a dimension table in dimensional modeling
+where it refers to a collection of attributes sharing the same atomicity.
+Here a dimension is a dimension of the metric, and typically represents
+a single "attribute", not a collection of attributes.
+
+### Hierarchies
+
+Hierarchies are linear collections of dimensions where we want to enable
+"drilling" or "zooming" operations in the BI tool. Think of a
+geospatial hierarchy may
+be pointing from `Customer Zone` -> `Customer Country` -> `Customer Region`
+    -> `Customer City`.
+
+Multiple alternate hierarchies can be defined for the sames dimensions,
+and while they generally should be thought of as many-to-one as you go
+down the hierarchy, this is not strickly enforce in Estrella as you
+may want to enable your users to drill "across" dimensions that don't have
+pure many-to-one relationships.
+
+### Folder
+Folders can be used to structure how the objects defined here are organized
+and presented to the user. Each folder has a key, label and description.
+
+### Filters
+
+Filters are simple, reusable, labeled, documented filters. This is not
+commonly used and is generally reserved for filters that involve
+complex logic (think subquery) and are used and reused. 
+
+
+
 # Premises
 
 ## Premise #1 A lot can be inferred from a physical schema

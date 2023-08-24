@@ -1,5 +1,5 @@
 from typing import List, Optional
-from estrella.core.base import Serializable
+from estrella.core.base import MenuItem
 
 
 class Folder(MenuItem):

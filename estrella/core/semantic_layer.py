@@ -10,7 +10,10 @@ from sqlalchemy import MetaData, Table, inspect
 from estrella.core.relation import Column, Relation
 from estrella.core.base import Serializable
 from estrella.core.hierarchy import Hierarchy
-from estrella.core.menu_items import Metric, Dimension, Filter, Folder
+from estrella.core.metric import Metric
+from estrella.core.dimension import Dimension
+from estrella.core.filter import Filter
+from estrella.core.folder import Folder
 from estrella.core.query_context import QueryContext
 from estrella.core.join import Join
 
