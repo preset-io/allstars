@@ -1,25 +1,46 @@
+import glob
 import os
 
 from typing import Any, List, Literal, Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from estrella.models import SemanticLayerModel, RelationModel, ColumnModel
 from sqlalchemy import MetaData, Table, inspect
 
 from pydantic import BaseModel, Field, Json
 
+BASE_FOLDER = "/tmp/estrella"
+
+class Pydanticable:
+    pydantic_model_class = None
+
+    def to_pydantic(self):
+        attrs = set(self.pydantic_model_class.__annotations__.keys())
+        kwargs = {attr: getattr(self, attr) for attr in attrs}
+        return self.pydantic_model_class(**kwargs)
+
+    @classmethod
+    def from_pydantic(cls, model):
+        attrs = list(cls.pydantic_model_class.__annotations__.keys())
+        kwargs = {attr: getattr(model, attr) for attr in attrs}
+        return cls(
+            name=model.name,
+            data_type=model.data_type,
+        )
+
 
 @dataclass
-class Column:
+class Column(Pydanticable):
+    pydantic_model_class = ColumnModel
+
     name: str
     data_type: str
 
-    def to_pydantic(self):
-        return ColumnModel(name=self.name, data_type=self.data_type)
-
 
 @dataclass
-class Relation:
+class Relation(Pydanticable):
     """A pointer to a physical table or a view"""
+    pydantic_model_class = RelationModel
+
 
     # the database schema
     database_schema: str
@@ -33,22 +54,27 @@ class Relation:
     def key(self):
         return f"{self.database_schema}.{self.reference}"
 
-    def to_pydantic(self):
-        return RelationModel(
-            key=self.key,
-            database_schema=self.database_schema,
-            reference=self.reference,
-            relation_type=self.relation_type,
-            columns=[c.to_pydantic() for c in self.columns],
+    @classmethod
+    def from_pydantic(cls, model):
+        return cls(
+            database_schema=model.database_schema,
+            reference=model.reference,
+            relation_type=model.relation_type,
+            columns=[Column.from_pydantic(c) for c in model.columns],
         )
 
 
 @dataclass
 class SemanticLayer:
-    relations: List[Relation]
+    relations: Optional[List[Relation]] = field(default_factory=list)
+    #join
+    #metrics
+    #dimensions
+    #contexts
+    #filters
+    #hierarchies
+    #folders
 
-    def __init__(self):
-        self.relations = []
 
     def create_relation(self, name, relation_type, columns, schema):
         return Relation(
@@ -84,7 +110,6 @@ class SemanticLayer:
         return model
 
     def compile_to_files(self):
-        BASE_FOLDER = "/tmp/estrella"
 
         # should move to some project init thing
         os.makedirs(os.path.join(BASE_FOLDER, 'relations'), exist_ok=True)
@@ -92,3 +117,35 @@ class SemanticLayer:
         for rel in self.relations:
             filename = os.path.join(BASE_FOLDER, 'relations', f"{rel.key}.yaml")
             rel.to_pydantic().to_yaml_file(filename)
+
+    @classmethod
+    def from_folder(cls, folder_path=None):
+        rel_folder = folder_path or os.path.join(BASE_FOLDER, 'relations')
+        yaml_files = glob.glob(f'{rel_folder}/*.yaml')
+        relations = []
+        for file_path in yaml_files:
+            relations += [RelationModel.from_yaml_file(file_path)]
+
+        return cls(
+            relations=relations,
+        )
+
+    def infer_joins(self):
+        """populates self.joins with Join objects based on self.relations!"""
+        raise NotImplementedError()
+
+    def infer_metrics(self):
+        """populates self.metrics with Metric objects!"""
+        raise NotImplementedError()
+
+    def augment_joins(self):
+        """read the local project to find joins"""
+        raise NotImplementedError()
+
+    def augment_metrics(self):
+        """read the local project to find user-defined metrics"""
+        raise NotImplementedError()
+
+    def get_relations(object_list):
+        """read the local project to find user-defined metrics"""
+        raise NotImplementedError()

@@ -13,6 +13,17 @@ class CustomModel(BaseModel):
         with open(filename, 'w') as file:
             yaml.dump(self.dict(), file, sort_keys=False)
 
+    @classmethod
+    def from_yaml(cls, yaml_string: str):
+        data = yaml.load(yaml_string, Loader=yaml.FullLoader)
+        return cls(**data)
+
+    @classmethod
+    def from_yaml_file(cls, filename: str):
+        with open(filename, 'r') as file:
+            data = yaml.load(file, Loader=yaml.FullLoader)
+        return cls(**data)
+
 
 class _Object(CustomModel):
     """Any object living in the SemanticLayer's menu"""

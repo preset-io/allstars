@@ -20,8 +20,15 @@ def extract(schema):
     sl.load_relations_from_schema(schema, eng)
     sl.compile_to_files()
 
-# Adding the extract command to the CLI
+
+@click.command()
+def read():
+    sl = SemanticLayer.from_folder()
+    for rel in sl.relations:
+        print(rel.to_pydantic().to_yaml())
+
 cli.add_command(extract)
+cli.add_command(read)
 
 def run() -> None:
     cli()
