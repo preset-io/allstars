@@ -1,3 +1,6 @@
-class QueryContext(CustomModel):
+from typing import List
+from estrella.core.join import Join
+
+class QueryContext:
     key: str
-    joins: List[JoinModel] = []
+    joins: List[Join] = []

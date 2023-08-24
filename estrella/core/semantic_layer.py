@@ -9,18 +9,26 @@ from sqlalchemy import MetaData, Table, inspect
 
 from estrella.core.relation import Column, Relation
 from estrella.core.base import Serializable
+from estrella.core.hierarchy import Hierarchy
+from estrella.core.menu_items import Metric, Dimension, Filter, Folder
+from estrella.core.query_context import QueryContext
+from estrella.core.join import Join
 
 
 @dataclass
 class SemanticLayer(Serializable):
-    relations: Optional[List[Relation]] = field(default_factory=list)
 
-    metrics: List[Metric] = []
-    dimension: List[Dimension] = []
-    joins: List[Join] = []
-    query_contexts: List[QueryContext] = []
-    folders: List[Folder] = []
-    filters: List[Filter] = []
+    # Menu items, things users will interact with
+    metrics: List[Metric] = field(default_factory=list)
+    dimension: List[Dimension] = field(default_factory=list)
+    folders: List[Folder] = field(default_factory=list)
+
+    # Internals
+    relations: Optional[List[Relation]] = field(default_factory=list)
+    joins: List[Join] = field(default_factory=list)
+    query_contexts: List[QueryContext] = field(default_factory=list)
+    filters: List[Filter] = field(default_factory=list)
+    hierarchies: List[Hierarchy] = field(default_factory=list)
 
     def create_relation(self, name, relation_type, columns, schema):
         return Relation(
@@ -71,6 +79,12 @@ class SemanticLayer(Serializable):
         return cls(
             relations=relations,
         )
+
+    def get_relation_keys_for_objects(self, objects):
+        relation_keys = set()
+        for o in objects:
+            relation_keys |= set(o.relation_keys)
+        return relation_keys
 
     def infer_joins(self):
         """populates self.joins with Join objects based on self.relations!"""
