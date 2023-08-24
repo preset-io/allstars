@@ -1,5 +1,7 @@
 # Estrella 
 
+<img width=300 src="https://github.com/preset-io/estrella/assets/487433/2b584754-5bae-4d2f-9b62-3db3373f748f">
+
 ## An Inferred, Progressively Adoptable Semantic Layer
 
 This project introduces a new semantic layer that’s
@@ -42,7 +44,7 @@ to predictable outcomes.
 
 # What's in an Estrella semantic layer?
 
-## Some internals`
+## Some internals
 
 Opening up the hood, the semantic layer has the following internal
 representation of
