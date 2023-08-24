@@ -24,11 +24,8 @@ a set of metadata tables with all the semantics
 
 ## REST too, or course
 
-If the virtual database doesn't suit your need, a RESTful API is also
-exposed....
-
-Read on to understand the premises, proposed mechanics, implementation,
-and how you can contribute to this innovative solution.
+If the virtual database doesn't suit your needs, a RESTful API is also
+exposed .... [TO BE COMPLETED LATER]
 
 ## Compiled 
 
@@ -38,6 +35,10 @@ to a static, deterministic model, that can be pushed to the file system
 for source control (similar to how npm's `package-lock.json` is derived
 from a more dynamic `package.json`) or to a `_meta` meta table in
 a target database.
+
+The dynamic rules you set up, and inferences in the
+Estrella's engine can be fully stamped, versioned and made static to lead
+to predictable outcomes.
 
 # What's in an Estrella semantic layer?
 
