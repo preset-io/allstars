@@ -1,5 +1,6 @@
 from typing import Literal
 
+
 class Join:
     left_relation_key: str
     right_relation_key: str

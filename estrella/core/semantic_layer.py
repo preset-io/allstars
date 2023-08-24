@@ -17,7 +17,6 @@ from estrella.core.join import Join
 
 @dataclass
 class SemanticLayer(Serializable):
-
     # Menu items, things users will interact with
     metrics: List[Metric] = field(default_factory=list)
     dimension: List[Dimension] = field(default_factory=list)

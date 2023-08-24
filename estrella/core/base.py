@@ -49,3 +49,37 @@ class Serializable:
         with open(filename, "r") as file:
             data = yaml.load(file, Loader=yaml.FullLoader)
         return cls.from_dict(data)
+
+
+class MenuItem(Serializable):
+    """Any object living in the SemanticLayer's menu"""
+
+    def __init__(
+        self, key: str, label: Optional[str] = None, description: Optional[str] = None
+    ):
+        self.key = key
+        self.label = label
+        self.description = description
+
+
+class _SqlExpression(MenuItem):
+    """Private class for something that lives in a SELECT"""
+
+    def __init__(
+        self,
+        expression: str,
+        relation_key: str = None,
+        relation_keys: List[str] = None,
+        *args,
+        **kwargs,
+    ):
+        if relation_key is None and (relation_keys is None or not relation_keys):
+            raise ValueError("Either relation_key or relation_keys must be provided.")
+
+        if relation_key:
+            relation_keys = [relation_key]
+
+        self.expression = expression
+        self.relation_keys = relation_keys if relation_keys is not None else []
+
+        super().__init__(*args, **kwargs)
