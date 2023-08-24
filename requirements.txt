@@ -1,4 +1,3 @@
-pydantic
 sqlalchemy
 pyyaml
 click
