@@ -25,7 +25,7 @@ underlying physical schema. On top of this large table, Estrella exposes
 a set of metadata tables with all the semantics
 (metrics, dimensions, hierarchies, ...)
 
-## REST too, or course
+## RESTfull of itself
 
 If the virtual database doesn't suit your needs, a RESTful API is also
 exposed .... [TO BE COMPLETED LATER]
