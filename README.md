@@ -30,7 +30,7 @@ a set of metadata tables with all the semantics
 If the virtual database doesn't suit your needs, a RESTful API is also
 exposed .... [TO BE COMPLETED LATER]
 
-## Compiled 
+## Compiled, serialized, versioned and broadcastable
 
 Our engine makes inferences based on your physical schema, naming
 conventions and enrichment as yaml or code, it "compiles" all this
@@ -42,6 +42,24 @@ a target database.
 The dynamic rules you set up, and inferences in the
 Estrella's engine can be fully stamped, versioned and made static to lead
 to predictable outcomes.
+
+Sources & targets:
+* the filesystem as a set of human readable yaml files
+* a database, where the content is serialized into a `_meta` table
+* source-only: a git repo+ref, so that you can load up directly from a uri
+* zip file: similiar to filesystem
+* s3://
+
+## A Dynamic mode
+
+In many cases you'll want the semantic layer to be deterministic and static.
+This is how semantic layers typically work. Alternatively, you can
+run Estrella in dynamic mode, point it to a database schema, and let it
+learn the schema it's working with, and receive hints as to how to behave
+as it goes. In this mode, it'll look up the physical schema, infer possible
+joins, and even receive SQL-like commands to enrichiment as in 
+`INSERT ('table1', 'table2', 'table_1.id = table2.id') INTO estrella.joins;`
+
 
 # What's in an Estrella semantic layer?
 
