@@ -1,6 +1,7 @@
 # Estrella 
 
-<img width=300 src="https://github.com/preset-io/estrella/assets/487433/2b584754-5bae-4d2f-9b62-3db3373f748f">
+<img width=250 src="https://github.com/preset-io/estrella/assets/487433/f06094ef-043f-40b5-b231-115c8621e97b">
+
 
 ## An Inferred, Progressively Adoptable Semantic Layer
 
@@ -284,7 +285,7 @@ a set of yaml files? templated?
    
 ```
 
-Read the content of **/*.yaml and merge all that into a big semantic layer object?
+Read the content of `**/*.yaml` and merge all that into a big semantic layer object?
 
 ## A CLI
 
@@ -299,3 +300,10 @@ $ semantic_layer_tool compile env=dev
 # push the semantic layer a given database
 $ semantic_layer_tool push env=dev
 ```
+
+## Feature ideas, beyond MVP
+
+* a way to auto-document the semantic layer, + automated ERD diagrams
+* AI-powered inference tool 
+* List of value caching (or redirecting) to offload the expensive SELECT DISTINCT as
+  BI tools populate their filter list
