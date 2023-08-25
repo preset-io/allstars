@@ -48,6 +48,7 @@ Sources & targets:
 * a database, where the content is serialized into a `_meta` table
 * source-only: a git repo+ref, so that you can load up directly from a uri
 * zip file: similiar to filesystem
+* a REST service
 * s3://
 
 ## A Dynamic mode
@@ -60,6 +61,16 @@ as it goes. In this mode, it'll look up the physical schema, infer possible
 joins, and even receive SQL-like commands to enrichiment as in 
 `INSERT ('table1', 'table2', 'table_1.id = table2.id') INTO estrella.joins;`
 
+## It's driver, not a proxy!
+
+Estrella is **NOT** a service that lives somewhere in between your database
+and your application, it's a Python `dbapi` driver + `sqlalchemy` dialect.
+This means it's **NOT** an external service you need to launch, keep up
+and observe, it's meant to be installed and used as a simple database driver.
+
+What if I'm not in python? well, hoping a community develops and builds
+driver for other languages that interact with Estrella REST service that's
+written in Python
 
 # What's in an Estrella semantic layer?
 
