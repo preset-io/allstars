@@ -1,4 +1,9 @@
 metrics:
+- key: order_distinct_count
+  label: Some metric someone defined
+  expression: COUNT(DISTINCT jaffleshop.orders.order_id)
+  relation_keys:
+  - jaffleshop.orders
 - key: jaffleshop.customers.count
   label: customers count
   description: the number of {r.reference}
