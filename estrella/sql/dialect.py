@@ -138,6 +138,17 @@ class EstrellaDialect(DefaultDialect):
         """
         return ["super"]
 
+    def get_view_names(
+        self,
+        connection: SqlaConnection,
+        schema: Optional[str] = None,
+        **kw: Any,
+    ) -> List[str]:
+        """
+        Return a list of view names.
+        """
+        return []
+
     def get_columns(
         self,
         connection: SqlaConnection,
