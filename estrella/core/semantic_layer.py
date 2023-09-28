@@ -55,12 +55,15 @@ class SemanticLayer(Serializable):
 
         # iterate over tables and views, and populate the relations attribute
         rels = [(s, "table") for s in tables] + [(s, "view") for s in views]
+
+        relations = []
         for name, relation_type in rels:
             print((name, relation_type))
             columns = inspector.get_columns(name, schema=schema)
-            self.relations += [
+            relations.append(
                 self.create_relation(name, relation_type, columns, schema)
-            ]
+            )
+        self.relations = SerializableCollection(relations)
 
         self.infer_joins()
         self.infer_metrics()
@@ -170,6 +173,7 @@ class SemanticLayer(Serializable):
                 if col_names == {"customer_id"}:
                     # TODO more work here
                     joins.append(r.gen_join(fr, cols))
+
         self.joins = SerializableCollection(joins)
 
     def augment_joins(self):
@@ -177,9 +181,5 @@ class SemanticLayer(Serializable):
         raise NotImplementedError()
 
     def augment_metrics(self):
-        """read the local project to find user-defined metrics"""
-        raise NotImplementedError()
-
-    def get_relations(object_list):
         """read the local project to find user-defined metrics"""
         raise NotImplementedError()

@@ -12,5 +12,9 @@ class Join(Serializable):
     cardinality: Literal["many_to_one", "one_to_many", "many_to_many"]
     join_term: Literal["JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER JOIN"]
 
+    @property
+    def key(self):
+        return f"{self.left_relation_key}.{self.right_relation_key}"
+
     def to_sql(self):
         return f"{self.join_term} ON {self.join_criteria}"

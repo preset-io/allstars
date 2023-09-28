@@ -117,7 +117,12 @@ class _SqlExpression(MenuItem):
         return d
 
 
-class SerializableCollection(list, Serializable):
+class SerializableCollection(dict, Serializable):
+
+    def __init__(self, l: list = None):
+        l = l or []
+        for o in l:
+            self[o.key] = o
 
     def to_serializable(self):
         l = []
@@ -137,6 +142,11 @@ class SerializableCollection(list, Serializable):
         objects = [object_class.from_dict(o) for o in data]
         return cls(objects)
 
+    def append(self, obj):
+        self[obj.key] = obj
 
     def upsert(self, collection):
         pass
+
+    def __iter__(self):
+        return iter(self.values())

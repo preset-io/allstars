@@ -1,5 +1,6 @@
 joins:
-- left_relation_key: jaffleshop.customers
+- key: jaffleshop.customers.jaffleshop.orders
+  left_relation_key: jaffleshop.customers
   right_relation_key: jaffleshop.orders
   join_criteria: jaffleshop.customers.customer_id = jaffleshop.orders.customer_id
   cardinality: unknown
