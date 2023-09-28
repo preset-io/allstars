@@ -1,0 +1,13 @@
+key: jaffleshop.raw_payments
+database_schema: jaffleshop
+reference: raw_payments
+relation_type: table
+columns:
+- name: id
+  data_type: INTEGER
+- name: order_id
+  data_type: INTEGER
+- name: payment_method
+  data_type: VARCHAR
+- name: amount
+  data_type: INTEGER
