@@ -17,3 +17,5 @@ columns:
   data_type: INTEGER
 - name: customer_lifetime_value
   data_type: FLOAT
+include_count_metric: true
+include_columns_as_dimensions: true

@@ -9,3 +9,5 @@ columns:
   data_type: VARCHAR
 - name: last_name
   data_type: VARCHAR
+include_count_metric: true
+include_columns_as_dimensions: true

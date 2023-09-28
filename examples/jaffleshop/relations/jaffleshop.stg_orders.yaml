@@ -11,3 +11,5 @@ columns:
   data_type: DATE
 - name: status
   data_type: VARCHAR
+include_count_metric: true
+include_columns_as_dimensions: true

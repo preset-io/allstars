@@ -11,3 +11,5 @@ columns:
   data_type: VARCHAR
 - name: amount
   data_type: FLOAT
+include_count_metric: true
+include_columns_as_dimensions: true

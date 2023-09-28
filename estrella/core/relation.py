@@ -20,6 +20,9 @@ class Relation(Serializable):
     relation_type: Literal["view", "table"]
     columns: List[Column]
 
+    include_count_metric: bool = True
+    include_columns_as_dimensions: bool = True
+
     @property
     def key(self):
         return f"{self.database_schema}.{self.reference}"

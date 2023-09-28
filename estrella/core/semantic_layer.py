@@ -64,6 +64,7 @@ class SemanticLayer(Serializable):
 
         self.infer_joins()
         self.infer_metrics()
+        self.infer_dimensions()
 
     def compile_to_files(self, folder):
         # relations
@@ -79,6 +80,10 @@ class SemanticLayer(Serializable):
         # metrics
         filename = os.path.join(folder, "metrics.yaml")
         self.metrics.to_yaml_file(filename, wrap_under="metrics")
+
+        # dimensions
+        filename = os.path.join(folder, "dimensions.yaml")
+        self.dimensions.to_yaml_file(filename, wrap_under="dimensions")
 
     @classmethod
     def from_folder(cls, folder_path=None):
@@ -118,6 +123,20 @@ class SemanticLayer(Serializable):
                 )
             )
         self.metrics = metrics
+
+    def infer_dimensions(self):
+        """populates self.metrics with Dimensions objects!"""
+        dims = SerializableCollection()
+        for r in self.relations:
+            for c in r.columns:
+                dims.append(
+                    Dimension(
+                        key=f"{r.key}.{c.name}",
+                        expression=f"{r.key}.{c.name}",
+                        relation_key=r.key,
+                    )
+                )
+        self.dimensions = dims
 
     def infer_joins(self, exclude_views=True):
         """
