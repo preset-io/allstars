@@ -3,20 +3,20 @@ import os
 
 from sqlalchemy import create_engine
 
+from estrella import config
 from estrella.core.semantic_layer import SemanticLayer
 
 
-@dataclass
 class Project:
     semantic_layer: SemanticLayer
 
-    BASE_FOLDER: str = "/tmp/estrella/jaffle"
-    SQLA_CON: str = "bigquery://preset-cloud-dev-dbt/core"
+    def __init__(self, folder=None, sqla_conn=None, *args, **kwargs):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        self.folder = folder or config.ESTRELLA_FOLDER
+        self.sqla_conn = sqla_conn or config.ESTRELLA_SQLA_CONN
+
         self.engine = create_engine(
-            self.SQLA_CON, credentials_path="/Users/max/.dbt/dev-dbt.json"
+            self.sqla_conn, credentials_path="/Users/max/.dbt/dev-dbt.json"
         )
 
     def load(self, database_schema=None):
@@ -24,8 +24,8 @@ class Project:
             self.semantic_layer = SemanticLayer()
             self.semantic_layer.load_relations_from_schema(database_schema, self.engine)
         else:
-            relation_folder = self.BASE_FOLDER
+            relation_folder = self.folder
             self.semantic_layer = SemanticLayer.from_folder(relation_folder)
 
     def flush(self):
-        self.semantic_layer.compile_to_files(self.BASE_FOLDER)
+        self.semantic_layer.compile_to_files(self.folder)
