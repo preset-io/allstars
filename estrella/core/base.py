@@ -12,6 +12,10 @@ class Serializable:
         """Converts the object to a dictionary, including properties."""
         d = asdict(self)
         props = {name: getattr(self, name) for name in self.properties()}
+        for k in d:
+            v = d[k]
+            if hasattr(v, 'to_dict'):
+                d[k] = v.to_dict()
         return {**props, **d}
 
     @classmethod
@@ -33,10 +37,13 @@ class Serializable:
         """Converts the object to a YAML string."""
         return yaml.dump(self.to_dict(), sort_keys=False)
 
-    def to_yaml_file(self, filename: str) -> None:
+    def to_yaml_file(self, filename: str, wrap_under: str = None) -> None:
         """Writes the object to a YAML file."""
+        d = self.to_dict()
+        if wrap_under:
+            d = {wrap_under: d}
         with open(filename, "w") as file:
-            yaml.dump(self.to_dict(), file, sort_keys=False)
+            yaml.dump(d, file, sort_keys=False)
 
     @classmethod
     def from_yaml(cls, yaml_string: str):
@@ -84,3 +91,24 @@ class _SqlExpression(MenuItem):
         self.relation_keys = relation_keys if relation_keys is not None else []
 
         super().__init__(*args, **kwargs)
+
+
+class SerializableCollection(list, Serializable):
+
+    def to_dict(self):
+        l = []
+        for o in self:
+            if hasattr(o, 'to_dict'):
+                o = o.to_dict()
+            l.append(o)
+        return l
+
+    @classmethod
+    def from_yaml_file(cls, filename: str, object_class: Serializable, key: str = None):
+        """Creates an instance of the class from a YAML file, excluding properties."""
+        with open(filename, "r") as file:
+            data = yaml.load(file, Loader=yaml.FullLoader)
+        if key:
+            data = data.get(key)
+        objects = [object_class.from_dict(o) for o in data]
+        return cls(objects)

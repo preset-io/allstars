@@ -1,7 +1,11 @@
 from typing import Literal
+from dataclasses import dataclass
+
+from estrella.core.base import Serializable
 
 
-class Join:
+@dataclass
+class Join(Serializable):
     left_relation_key: str
     right_relation_key: str
     join_criteria: str

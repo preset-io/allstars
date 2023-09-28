@@ -10,7 +10,7 @@ from estrella.core.semantic_layer import SemanticLayer
 class Project:
     semantic_layer: SemanticLayer
 
-    BASE_FOLDER: str = "/tmp/estrella"
+    BASE_FOLDER: str = "/tmp/estrella/jaffle"
     SQLA_CON: str = "bigquery://preset-cloud-dev-dbt/core"
 
     def __init__(self, *args, **kwargs):
@@ -24,7 +24,7 @@ class Project:
             self.semantic_layer = SemanticLayer()
             self.semantic_layer.load_relations_from_schema(database_schema, self.engine)
         else:
-            relation_folder = os.path.join(self.BASE_FOLDER, "relations")
+            relation_folder = self.BASE_FOLDER
             self.semantic_layer = SemanticLayer.from_folder(relation_folder)
 
     def flush(self):

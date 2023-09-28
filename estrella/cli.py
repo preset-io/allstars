@@ -24,9 +24,7 @@ def read():
     project = Project()
     project.load()
     sl = project.semantic_layer
-    print(len(sl.relations))
-    for rel in sl.relations:
-        print(rel.to_yaml())
+    print(sl.to_yaml())
 
 
 cli.add_command(extract)

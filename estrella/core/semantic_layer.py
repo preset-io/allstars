@@ -4,11 +4,12 @@ import yaml
 
 from typing import Any, List, Literal, Optional
 from dataclasses import dataclass, field, asdict
+from itertools import combinations
 
 from sqlalchemy import MetaData, Table, inspect
 
 from estrella.core.relation import Column, Relation
-from estrella.core.base import Serializable
+from estrella.core.base import Serializable, SerializableCollection
 from estrella.core.hierarchy import Hierarchy
 from estrella.core.metric import Metric
 from estrella.core.dimension import Dimension
@@ -54,12 +55,14 @@ class SemanticLayer(Serializable):
 
         # iterate over tables and views, and populate the relations attribute
         rels = [(s, "table") for s in tables] + [(s, "view") for s in views]
-        for name, relation_type in rels[:5]:
+        for name, relation_type in rels:
             print((name, relation_type))
             columns = inspector.get_columns(name, schema=schema)
             self.relations += [
                 self.create_relation(name, relation_type, columns, schema)
             ]
+
+        self.infer_joins()
 
     def compile_to_files(self, folder):
         # should move to some project init thing
@@ -69,17 +72,26 @@ class SemanticLayer(Serializable):
             filename = os.path.join(folder, "relations", f"{rel.key}.yaml")
             rel.to_yaml_file(filename)
 
+        filename = os.path.join(folder, "joins.yaml")
+        self.joins.to_yaml_file(filename, wrap_under="joins")
+
     @classmethod
     def from_folder(cls, folder_path=None):
-        rel_folder = folder_path
+
+        # Relations
+        rel_folder = os.path.join(folder_path, "relations")
         yaml_files = glob.glob(f"{rel_folder}/*.yaml")
-        print(rel_folder)
-        relations = []
+        relations = SerializableCollection()
         for file_path in yaml_files:
-            relations += [Relation.from_yaml_file(file_path)]
+            relations.append(Relation.from_yaml_file(file_path))
+
+        # Joins
+        join_file = os.path.join(folder_path, "joins.yaml")
+        joins = SerializableCollection.from_yaml_file(join_file, Join, key="joins")
 
         return cls(
             relations=relations,
+            joins=joins,
         )
 
     def get_relation_keys_for_objects(self, objects):
@@ -88,9 +100,35 @@ class SemanticLayer(Serializable):
             relation_keys |= set(o.relation_keys)
         return relation_keys
 
-    def infer_joins(self):
-        """populates self.joins with Join objects based on self.relations!"""
-        raise NotImplementedError()
+    def infer_joins(self, exclude_views=True):
+        """
+        TODO this should grow quite a bit, inferring joins is quite a complex
+        and core feature. Some thoughts:
+
+        - should look at PKs and FKs, cardinality
+        - look for common columns where left looks like a PK
+        - should we scan/look for unicity?
+        - hints? look for column or table description that says pk or fk?
+        - be careful around overriding enriched stuff, if users have already
+          defined a join between two tables, do not try to suggest another one
+          unless they're asking to --overwrite
+        """
+        self.joins = SerializableCollection()
+        relations = []
+        joins = []
+        for r in self.relations:
+            if not exclude_views or (exclude_views and r.relation_type != "view"):
+                relations.append(r)
+
+        for r, fr in combinations(relations, 2):
+            if not r == fr :
+                cols = r.find_common_columns(fr)
+                col_names  = {c.name for c in cols}
+                if col_names == {"customer_id"}:
+                    # TODO more work here
+                    joins.append(r.gen_join(fr, cols))
+        self.joins = SerializableCollection(joins)
+
 
     def infer_metrics(self):
         """populates self.metrics with Metric objects!"""
