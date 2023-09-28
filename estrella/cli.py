@@ -11,13 +11,19 @@ def cli():
 
 @click.command()
 @click.argument("schema")
-def extract(schema):
+@click.option('--overwrite', is_flag=True, help='Overwrite existing files.')
+def extract(schema, overwrite):
     click.echo(f"Extracting metadata from schema: {schema}")
 
-    project = Project()
-    project.load(schema)
-    project.flush()
+    extracted_project = Project()
+    extracted_project.load(schema)
 
+    if not overwrite:
+        current_project = Project()
+        current_project.load()
+        extracted_project.semantic_layer.upsert(current_project.semantic_layer)
+
+    extracted_project.flush()
 
 @click.command()
 def read():

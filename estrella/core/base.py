@@ -146,7 +146,7 @@ class SerializableCollection(dict, Serializable):
         self[obj.key] = obj
 
     def upsert(self, collection):
-        pass
+        self.update(collection)
 
     def __iter__(self):
         return iter(self.values())
