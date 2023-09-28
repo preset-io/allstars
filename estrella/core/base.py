@@ -16,11 +16,14 @@ class Serializable:
             props = {name: getattr(self, name) for name in self.properties()}
             for k in d:
                 v = d[k]
-                if hasattr(v, "to_dict"):
-                    d[k] = v.to_dict()
+                if hasattr(v, "to_list"):
+                    d[k] = v.to_list()
             return {**props, **d}
         else:
-            raise Exception("Nah gotta provide a to_dict for non-dataclass")
+            raise Exception("Nah gotta provide a to_serializable for non-dataclass")
+
+    def to_serializable(self) -> dict:
+        return self.to_dict()
 
     @classmethod
     def properties(cls) -> set:
@@ -39,11 +42,11 @@ class Serializable:
 
     def to_yaml(self) -> str:
         """Converts the object to a YAML string."""
-        return yaml.dump(self.to_dict(), sort_keys=False)
+        return yaml.dump(self.to_serializable(), sort_keys=False)
 
     def to_yaml_file(self, filename: str, wrap_under: str = None) -> None:
         """Writes the object to a YAML file."""
-        d = self.to_dict()
+        d = self.to_serializable()
         if wrap_under:
             d = {wrap_under: d}
         with open(filename, "w") as file:
@@ -115,7 +118,8 @@ class _SqlExpression(MenuItem):
 
 
 class SerializableCollection(list, Serializable):
-    def to_dict(self):
+
+    def to_serializable(self):
         l = []
         for o in self:
             if hasattr(o, "to_dict"):
@@ -132,3 +136,7 @@ class SerializableCollection(list, Serializable):
             data = data.get(key)
         objects = [object_class.from_dict(o) for o in data]
         return cls(objects)
+
+
+    def upsert(self, collection):
+        pass

@@ -103,6 +103,11 @@ class SemanticLayer(Serializable):
             joins=joins,
         )
 
+    def upsert(semantic_layer):
+        """Insert new keys and update existing ones"""
+        for collection in ['relations', 'metrics', 'dimensions']:
+            pass
+
     def get_relation_keys_for_objects(self, objects):
         relation_keys = set()
         for o in objects:
