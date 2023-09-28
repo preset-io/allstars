@@ -2,7 +2,7 @@ import os
 from typing import List, Optional
 import yaml
 
-from dataclasses import asdict, is_dataclass
+from dataclasses import asdict, is_dataclass, fields
 
 
 class Serializable:
@@ -10,14 +10,16 @@ class Serializable:
 
     def to_dict(self) -> dict:
         """Converts the object to a dictionary, including properties."""
-
         if is_dataclass(self.__class__):
-            d = asdict(self)
+            d = {}
+            for field in fields(self):
+                value = getattr(self, field.name)
+                if hasattr(value, "to_serializable"):
+                    d[field.name] = value.to_serializable()
+                else:
+                    d[field.name] = value
+
             props = {name: getattr(self, name) for name in self.properties()}
-            for k in d:
-                v = d[k]
-                if hasattr(v, "to_list"):
-                    d[k] = v.to_list()
             return {**props, **d}
         else:
             raise Exception("Nah gotta provide a to_serializable for non-dataclass")
@@ -42,7 +44,8 @@ class Serializable:
 
     def to_yaml(self) -> str:
         """Converts the object to a YAML string."""
-        return yaml.dump(self.to_serializable(), sort_keys=False)
+        obj = self.to_serializable()
+        return yaml.dump(obj, sort_keys=False)
 
     def to_yaml_file(self, filename: str, wrap_under: str = None) -> None:
         """Writes the object to a YAML file."""

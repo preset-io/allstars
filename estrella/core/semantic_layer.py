@@ -23,13 +23,12 @@ from estrella.core.join import Join
 class SemanticLayer(Serializable):
     # Menu items, things users will interact with
     metrics: SerializableCollection[Metric] = field(default_factory=SerializableCollection)
-    dimension: SerializableCollection[Dimension] = field(default_factory=SerializableCollection)
     folders: SerializableCollection[Folder] = field(default_factory=SerializableCollection)
+    dimensions: SerializableCollection[Dimension] = field(default_factory=SerializableCollection)
 
     # Internals
     relations: Optional[SerializableCollection[Relation]] = field(default_factory=SerializableCollection)
     joins: SerializableCollection[Join] = field(default_factory=SerializableCollection)
-    dimensions: SerializableCollection[Dimension] = field(default_factory=SerializableCollection)
     query_contexts: SerializableCollection[QueryContext] = field(default_factory=SerializableCollection)
     filters: SerializableCollection[Filter] = field(default_factory=SerializableCollection)
     hierarchies: SerializableCollection[Hierarchy] = field(default_factory=SerializableCollection)
@@ -103,6 +102,10 @@ class SemanticLayer(Serializable):
         f = os.path.join(folder_path, "joins.yaml")
         joins = SerializableCollection.from_yaml_file(f, Join, key="joins")
 
+        # Metrics
+        f = os.path.join(folder_path, "metrics.yaml")
+        metrics = SerializableCollection.from_yaml_file(f, Metric, key="metrics")
+
         # Dimensions
         f = os.path.join(folder_path, "dimensions.yaml")
         dimensions = SerializableCollection.from_yaml_file(f, Dimension, key="dimensions")
@@ -111,6 +114,7 @@ class SemanticLayer(Serializable):
             relations=relations,
             joins=joins,
             dimensions=dimensions,
+            metrics=metrics,
         )
 
     def upsert(self, semantic_layer):
