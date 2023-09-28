@@ -1,4 +1,5 @@
 from estrella.core.base import _SqlExpression
+from dataclasses import dataclass
 
 
 class Metric(_SqlExpression):

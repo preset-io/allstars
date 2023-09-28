@@ -2,7 +2,7 @@ import os
 from typing import List, Optional
 import yaml
 
-from dataclasses import asdict
+from dataclasses import asdict, is_dataclass
 
 
 class Serializable:
@@ -10,13 +10,17 @@ class Serializable:
 
     def to_dict(self) -> dict:
         """Converts the object to a dictionary, including properties."""
-        d = asdict(self)
-        props = {name: getattr(self, name) for name in self.properties()}
-        for k in d:
-            v = d[k]
-            if hasattr(v, 'to_dict'):
-                d[k] = v.to_dict()
-        return {**props, **d}
+
+        if is_dataclass(self.__class__):
+            d = asdict(self)
+            props = {name: getattr(self, name) for name in self.properties()}
+            for k in d:
+                v = d[k]
+                if hasattr(v, 'to_dict'):
+                    d[k] = v.to_dict()
+            return {**props, **d}
+        else:
+            raise Exception("Nah gotta provide a to_dict for non-dataclass")
 
     @classmethod
     def properties(cls) -> set:
@@ -69,6 +73,13 @@ class MenuItem(Serializable):
         self.label = label
         self.description = description
 
+    def to_dict(self):
+        return {
+            "key": self.key,
+            "label": self.label,
+            "description": self.description,
+        }
+
 
 class _SqlExpression(MenuItem):
     """Private class for something that lives in a SELECT"""
@@ -91,6 +102,14 @@ class _SqlExpression(MenuItem):
         self.relation_keys = relation_keys if relation_keys is not None else []
 
         super().__init__(*args, **kwargs)
+
+    def to_dict(self):
+        d = super().to_dict()
+        d.update({
+            "expression": self.expression,
+            "relation_keys": self.relation_keys,
+        })
+        return d
 
 
 class SerializableCollection(list, Serializable):

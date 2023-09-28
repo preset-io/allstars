@@ -63,17 +63,22 @@ class SemanticLayer(Serializable):
             ]
 
         self.infer_joins()
+        self.infer_metrics()
 
     def compile_to_files(self, folder):
-        # should move to some project init thing
+        # relations
         os.makedirs(os.path.join(folder, "relations"), exist_ok=True)
-
         for rel in self.relations:
             filename = os.path.join(folder, "relations", f"{rel.key}.yaml")
             rel.to_yaml_file(filename)
 
+        # joins
         filename = os.path.join(folder, "joins.yaml")
         self.joins.to_yaml_file(filename, wrap_under="joins")
+
+        # metrics
+        filename = os.path.join(folder, "metrics.yaml")
+        self.metrics.to_yaml_file(filename, wrap_under="metrics")
 
     @classmethod
     def from_folder(cls, folder_path=None):
@@ -99,6 +104,20 @@ class SemanticLayer(Serializable):
         for o in objects:
             relation_keys |= set(o.relation_keys)
         return relation_keys
+
+    def infer_metrics(self):
+        """populates self.metrics with Metric objects!"""
+        metrics = SerializableCollection()
+        for r in self.relations:
+            metrics.append(Metric(
+                key=f"{r.key}.count",
+                label=f"{r.reference} count",
+                description="the number of {r.reference}",
+                expression="COUNT(*)",
+                relation_key=r.key,
+            ))
+        self.metrics = metrics
+
 
     def infer_joins(self, exclude_views=True):
         """
@@ -128,11 +147,6 @@ class SemanticLayer(Serializable):
                     # TODO more work here
                     joins.append(r.gen_join(fr, cols))
         self.joins = SerializableCollection(joins)
-
-
-    def infer_metrics(self):
-        """populates self.metrics with Metric objects!"""
-        raise NotImplementedError()
 
     def augment_joins(self):
         """read the local project to find joins"""
