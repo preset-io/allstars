@@ -16,7 +16,7 @@ class Serializable:
             props = {name: getattr(self, name) for name in self.properties()}
             for k in d:
                 v = d[k]
-                if hasattr(v, 'to_dict'):
+                if hasattr(v, "to_dict"):
                     d[k] = v.to_dict()
             return {**props, **d}
         else:
@@ -105,19 +105,20 @@ class _SqlExpression(MenuItem):
 
     def to_dict(self):
         d = super().to_dict()
-        d.update({
-            "expression": self.expression,
-            "relation_keys": self.relation_keys,
-        })
+        d.update(
+            {
+                "expression": self.expression,
+                "relation_keys": self.relation_keys,
+            }
+        )
         return d
 
 
 class SerializableCollection(list, Serializable):
-
     def to_dict(self):
         l = []
         for o in self:
-            if hasattr(o, 'to_dict'):
+            if hasattr(o, "to_dict"):
                 o = o.to_dict()
             l.append(o)
         return l

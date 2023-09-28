@@ -82,7 +82,6 @@ class SemanticLayer(Serializable):
 
     @classmethod
     def from_folder(cls, folder_path=None):
-
         # Relations
         rel_folder = os.path.join(folder_path, "relations")
         yaml_files = glob.glob(f"{rel_folder}/*.yaml")
@@ -109,15 +108,16 @@ class SemanticLayer(Serializable):
         """populates self.metrics with Metric objects!"""
         metrics = SerializableCollection()
         for r in self.relations:
-            metrics.append(Metric(
-                key=f"{r.key}.count",
-                label=f"{r.reference} count",
-                description="the number of {r.reference}",
-                expression="COUNT(*)",
-                relation_key=r.key,
-            ))
+            metrics.append(
+                Metric(
+                    key=f"{r.key}.count",
+                    label=f"{r.reference} count",
+                    description="the number of {r.reference}",
+                    expression="COUNT(*)",
+                    relation_key=r.key,
+                )
+            )
         self.metrics = metrics
-
 
     def infer_joins(self, exclude_views=True):
         """
@@ -140,9 +140,9 @@ class SemanticLayer(Serializable):
                 relations.append(r)
 
         for r, fr in combinations(relations, 2):
-            if not r == fr :
+            if not r == fr:
                 cols = r.find_common_columns(fr)
-                col_names  = {c.name for c in cols}
+                col_names = {c.name for c in cols}
                 if col_names == {"customer_id"}:
                     # TODO more work here
                     joins.append(r.gen_join(fr, cols))

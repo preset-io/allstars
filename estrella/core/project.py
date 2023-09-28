@@ -11,7 +11,6 @@ class Project:
     semantic_layer: SemanticLayer
 
     def __init__(self, folder=None, sqla_conn=None, *args, **kwargs):
-
         self.folder = folder or config.ESTRELLA_FOLDER
         self.sqla_conn = sqla_conn or config.ESTRELLA_SQLA_CONN
 
