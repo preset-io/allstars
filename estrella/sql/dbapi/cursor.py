@@ -11,7 +11,6 @@ from estrella.sql.dbapi.decorators import check_closed, check_result
 from estrella.sql.dbapi.exceptions import NotSupportedError
 from estrella.sql.dbapi.typing import Description
 from estrella.sql.dbapi.utils import escape_parameter
-from estrella.sql.transpile import transpile
 
 
 class Cursor:
@@ -23,8 +22,7 @@ class Cursor:
     def __init__(self, database_url: str, **kwargs: Any):
         # store a cursor from the actual database
         self.engine = create_engine(database_url, connect_args=kwargs)
-        dbapi_connection = self.engine.raw_connection()
-        self._cursor = dbapi_connection.cursor()
+        self.dbapi_connection = self.engine.raw_connection()
 
         self.arraysize = 1
         self.closed = False
@@ -64,6 +62,8 @@ class Cursor:
         """
         Execute a query using a cursor from the actual database
         """
+        from estrella.sql.transpile import transpile
+
         self.description = None
         self._rowcount = -1
 
@@ -79,10 +79,11 @@ class Cursor:
         operation = transpile(self.engine, operation)
 
         # execute query
-        self._cursor.execute(operation)
+        cursor = self.dbapi_connection.cursor()
+        cursor.execute(operation)
 
-        self._results = (tuple(row) for row in self._cursor)
-        self.description = self._cursor.description
+        self._results = (tuple(row) for row in cursor)
+        self.description = cursor.description
 
         return self
 

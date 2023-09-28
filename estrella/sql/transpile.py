@@ -1,9 +1,14 @@
+import copy
+import logging
+
 from sqlalchemy import inspect
 from sqlalchemy.engine import Engine
 from sqlglot import exp, parse, parse_one
 from sqlglot.dialects.dialect import Dialect
 
 from estrella.sql.dbapi.exceptions import ProgrammingError
+
+_logger = logging.getLogger(__name__)
 
 
 def transpile(engine: Engine, query: str) -> str:
@@ -19,20 +24,33 @@ def transpile(engine: Engine, query: str) -> str:
         for table in statement.find_all(exp.Table):
             tables.add(table.name)
 
-    if tables != {"super"}:
+    if not tables & {"super", "main.super"}:
         raise ProgrammingError("Only the 'super' table is supported")
 
     # fetch all column references
     statements = []
     for statement in tree:
+        # unalias columns
+        aliases = copy.deepcopy(
+            {alias.alias: alias.this for alias in statement.find_all(exp.Alias)}
+        )
+        for column in statement.find_all(exp.Column):
+            if column.name in aliases:
+                column.replace(aliases[column.name])
+
+        # XXX
+        statement = parse(str(statement))[0]
+
+        # extract all columns referenced
         columns = set()
         for column in statement.find_all(exp.Column):
             columns.add(column.name)
-            # replace column reference with actual column name
-            column.replace(parse_one(column.name))
+            column.replace(parse_one(column.name, into=exp.Column))
+
+        # collect all referenced tables
+        tables = {table.split(".")[0] for table in columns}
 
         # figure out how to join tables
-        tables = {table.split(".")[0] for table in columns}
         if len(tables) == 1:
             replacement = parse_one(tables.pop(), into=exp.Table)
         elif len(tables) == 2:
@@ -75,5 +93,6 @@ def transpile(engine: Engine, query: str) -> str:
     query = ";\n".join(
         Dialect.get_or_raise("sqlite")().generate(statement) for statement in statements
     )
+    _logger.info("Transpiled query:\n%s", query)
 
     return query
