@@ -110,11 +110,19 @@ class SemanticLayer(Serializable):
         f = os.path.join(folder_path, "dimensions.yaml")
         dimensions = SerializableCollection.from_yaml_file(f, Dimension, key="dimensions")
 
+        # Folders
+        f = os.path.join(folder_path, "folders.yaml")
+        folders = SerializableCollection.from_yaml_file(f, Folder, key="folders")
+        expanded_folders = SerializableCollection()
+        for folder in folders:
+            folder.flatten(expanded_folders)
+
         return cls(
             relations=relations,
             joins=joins,
             dimensions=dimensions,
             metrics=metrics,
+            folders=expanded_folders,
         )
 
     def upsert(self, semantic_layer):

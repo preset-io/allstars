@@ -42,9 +42,11 @@ class Serializable:
         }
         return cls(**filtered_dict)
 
-    def to_yaml(self) -> str:
+    def to_yaml(self, key=None) -> str:
         """Converts the object to a YAML string."""
         obj = self.to_serializable()
+        if key and key in obj:
+            obj = obj[key]
         return yaml.dump(obj, sort_keys=False)
 
     def to_yaml_file(self, filename: str, wrap_under: str = None) -> None:

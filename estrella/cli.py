@@ -26,11 +26,25 @@ def extract(schema, overwrite):
     extracted_project.flush()
 
 @click.command()
-def read():
+@click.option("--key", default=None)
+def read(key):
     project = Project()
     project.load()
     sl = project.semantic_layer
-    print(sl.to_yaml())
+
+    print(sl.to_yaml(key=key))
+
+@click.command()
+@click.argument("sql")
+def sql(sql):
+    project = Project()
+    project.load()
+    project.semantic_layer
+
+    transpiled_sql = Transpiler.transpile(sql)
+
+    results = DatabaseInterface.get_df(sql)
+    print(results)
 
 
 cli.add_command(extract)
