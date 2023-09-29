@@ -1,0 +1,13 @@
+folders:
+- key: metrics
+  label: Metrics
+- key: dimensions
+  label: Dimensions
+  folders:
+  - key: orders
+    label: Orders
+  - key: customers
+    label: Customers
+
+
+
