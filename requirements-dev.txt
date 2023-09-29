@@ -1,4 +1,5 @@
 black
+pre-commit
 ipython
 psycopg2-binary
 sqlalchemy-bigquery[bqstorage]
