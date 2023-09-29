@@ -3,13 +3,15 @@
 <img width=600 src="https://github.com/preset-io/estrella/assets/487433/390e73c4-f99b-4912-a6b2-830b0b9a0375">
 
 
-## An Inferred, Progressively Adoptable Semantic Layer
+## A Smart & Progressive Semantic Layer
 
-SQL All ⭐ Stars is a smart semantic layer that takes a new approach:
+SQL All ⭐ Stars or `allstars` is a smart semantic layer that takes
+a new approach:
 
 - **mostly inferred:** it looks at your physical schema and makes
   educated guesses around your semantics (joins, metrics, dimensions,
-  hierarchies)
+  hierarchies). Eventually it will also look at your usage patterns
+  to infer more useful semantics.
 - **progressively enrichable:** building on it's inferences, you can
   curate, enrich and rewire things as needed at your own pace. It's useful
   on day 0, and becomes more useful as you extend the semantics.
@@ -32,11 +34,16 @@ FROM ⭐
 GROUP BY ⭐;
 ```
 Something that's novel about SQL All ⭐ Stars is the idea of exposing this
-semantic layer primarily as a virtual database. This shows as a
-one or many wide tables exposing essentially all of the columns in your semantic
-layer. While you or your BI tool run very simple SQL against a large table,
+semantic layer primarily as a **virtual database**. This shows as a
+one or many wide tables exposing essentially all of the columns that
+you want to expose from your database. While you or your BI tool run
+very simple SQL against large tables,
 allstars transpiles this query into a more complex query against the
 underlying physical schema.
+
+Without getting too deep in the mechanics, there's one large table to rule
+them all (the "superstar" ⭐ table), and one table per "query context",
+representing sets of tables that can be joined together to answer queries.
 
 ```sql
 SELECT ⭐ FROM ⭐.metrics;
@@ -53,6 +60,19 @@ a set of metadata tables with all the semantics
 If you are curious as to how it works, the TLDR is
 that it's implemented as a dbapi driver
 in Python that acts as a bit of a proxy in front of your database.
+
+## Sweet synthtactic sugar
+
+As a "transpiler with context" allstars can allow you to sprinkle some sugar
+in your SQL. Let's get ahead of ANSI SQL and implement things. Ideas
+to be implemented:
+- `FROM ⭐` - straight from the superstar table
+- `GROUP BY ⭐` - group by all dimensions referenced in the query
+- `GROUP BY ⭐.DAY` - same as above, but truncate the one time column by day,
+  WEEK, MONTH or other timeframe keywords
+- trailing commas aloud
+- a nice hint system
+- window function abstraction(?)
 
 ## RESTfull of itself
 
