@@ -1,6 +1,6 @@
-# SQL All⭐Stars 
+# SQL All ⭐ Stars 
 
-<img width=250 src="https://github.com/preset-io/estrella/assets/487433/f06094ef-043f-40b5-b231-115c8621e97b">
+<img width=350 src="https://github.com/preset-io/estrella/assets/487433/6f8d9f9f-2d1d-4bd1-884d-562f0bf6edf3">
 
 
 ## An Inferred, Progressively Adoptable Semantic Layer
