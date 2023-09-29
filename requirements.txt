@@ -1,3 +1,4 @@
 sqlalchemy
 pyyaml
 click
+pandas

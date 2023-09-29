@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 import os
 
-from sqlalchemy import create_engine
-
 from estrella import config
 from estrella.core.semantic_layer import SemanticLayer
+from estrella.database_interface import DatabaseInterface
 
 
 class Project:
@@ -14,14 +13,12 @@ class Project:
         self.folder = folder or config.ESTRELLA_FOLDER
         self.sqla_conn = sqla_conn or config.ESTRELLA_SQLA_CONN
 
-        self.engine = create_engine(
-            self.sqla_conn, credentials_path="/Users/max/.dbt/dev-dbt.json"
-        )
+        self.db = DatabaseInterface(self.sqla_conn)
 
     def load(self, database_schema=None):
         if database_schema:
             self.semantic_layer = SemanticLayer()
-            self.semantic_layer.load_relations_from_schema(database_schema, self.engine)
+            self.semantic_layer.load_relations_from_schema(database_schema, self.db)
         else:
             relation_folder = self.folder
             self.semantic_layer = SemanticLayer.from_folder(relation_folder)

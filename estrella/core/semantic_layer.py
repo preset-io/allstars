@@ -6,8 +6,6 @@ from typing import Any, List, Literal, Optional
 from dataclasses import dataclass, field, asdict
 from itertools import combinations
 
-from sqlalchemy import MetaData, Table, inspect
-
 from estrella.core.relation import Column, Relation
 from estrella.core.base import Serializable, SerializableCollection
 from estrella.core.hierarchy import Hierarchy
@@ -57,15 +55,13 @@ class SemanticLayer(Serializable):
             relation_type=relation_type,
         )
 
-    def load_relations_from_schema(self, schema, sqla_engine):
-        # create an inspector
-        inspector = inspect(sqla_engine)
+    def load_relations_from_schema(self, schema, db):
 
         # get all table names in the specified schema
-        tables = inspector.get_table_names(schema=schema)
+        tables = db.inspector.get_table_names(schema=schema)
 
         # get all view names in the specified schema
-        views = inspector.get_view_names(schema=schema)
+        views = db.inspector.get_view_names(schema=schema)
 
         # iterate over tables and views, and populate the relations attribute
         rels = [(s, "table") for s in tables] + [(s, "view") for s in views]
@@ -73,7 +69,7 @@ class SemanticLayer(Serializable):
         relations = []
         for name, relation_type in rels:
             print((name, relation_type))
-            columns = inspector.get_columns(name, schema=schema)
+            columns = db.inspector.get_columns(name, schema=schema)
             relations.append(self.create_relation(name, relation_type, columns, schema))
         self.relations = SerializableCollection(relations)
 
