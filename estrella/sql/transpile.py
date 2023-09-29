@@ -6,7 +6,7 @@ from sqlalchemy.engine import Engine
 from sqlglot import exp, parse, parse_one
 from sqlglot.dialects.dialect import Dialect
 
-from estrella.sql.dbapi.exceptions import ProgrammingError
+from allstars.sql.dbapi.exceptions import ProgrammingError
 
 _logger = logging.getLogger(__name__)
 

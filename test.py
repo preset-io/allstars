@@ -1,4 +1,4 @@
-from estrella.core.metric import Metric
+from allstars.core.metric import Metric
 
 metrics = [
     Metric(key="test", expression="SUM(test)", relation_keys=["core.date_spine"]),
@@ -10,7 +10,7 @@ metrics = [
     Metric(key="test", expression="SUM(test)", relation_key="core.date_spine"),
 ]
 print(metrics)
-from estrella.core.project import Project
+from allstars.core.project import Project
 
 p = Project()
 p.load()

@@ -1,5 +1,5 @@
 from typing import List
-from estrella.core.join import Join
+from allstars.core.join import Join
 
 
 class QueryContext:

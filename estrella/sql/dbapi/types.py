@@ -6,7 +6,7 @@ import datetime
 import time
 from typing import Any
 
-from estrella.sql.dbapi.typing import ColumnType
+from allstars.sql.dbapi.typing import ColumnType
 
 
 class DBAPIType:  # pylint: disable=too-few-public-methods

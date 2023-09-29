@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Literal, List
 
-from estrella.core.base import Serializable
-from estrella.core.join import Join
+from allstars.core.base import Serializable
+from allstars.core.join import Join
 
 
 @dataclass

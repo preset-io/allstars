@@ -1,7 +1,7 @@
 from os import environ
 
 config_defaults = {
-    "ESTRELLA_FOLDER": "/tmp/estrella",
+    "ESTRELLA_FOLDER": "/tmp/allstars",
     "ESTRELLA_SQLA_CONN": "mysql://",
     "ESTRELLA_PROJECT": "jaffleshop",
 }

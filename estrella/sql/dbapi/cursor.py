@@ -7,10 +7,10 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from sqlalchemy import create_engine
 
-from estrella.sql.dbapi.decorators import check_closed, check_result
-from estrella.sql.dbapi.exceptions import NotSupportedError
-from estrella.sql.dbapi.typing import Description
-from estrella.sql.dbapi.utils import escape_parameter
+from allstars.sql.dbapi.decorators import check_closed, check_result
+from allstars.sql.dbapi.exceptions import NotSupportedError
+from allstars.sql.dbapi.typing import Description
+from allstars.sql.dbapi.utils import escape_parameter
 
 
 class Cursor:
@@ -62,7 +62,7 @@ class Cursor:
         """
         Execute a query using a cursor from the actual database
         """
-        from estrella.sql.transpile import transpile
+        from allstars.sql.transpile import transpile
 
         self.description = None
         self._rowcount = -1

@@ -1,6 +1,6 @@
 # SQL All ⭐ Stars 
 
-<img width=600 src="https://github.com/preset-io/estrella/assets/487433/6f8d9f9f-2d1d-4bd1-884d-562f0bf6edf3">
+<img width=600 src="https://github.com/preset-io/allstars/assets/487433/6f8d9f9f-2d1d-4bd1-884d-562f0bf6edf3">
 
 
 ## An Inferred, Progressively Adoptable Semantic Layer
@@ -16,12 +16,12 @@ enrichment over time using either yaml or as code.
 
 ## Served as a virtual database
 
-Something that's novel about Estrella is the idea of exposing this
+Something that's novel about SQL All ⭐ Stars is the idea of exposing this
 semantic layer primarily as a virtual database. This shows as one
 very large table exposing essentially all of the columns in your semantic
 layer. While you run very simple SQL against that large table,
-Estrella transpiles this query into a more complex query against the
-underlying physical schema. On top of this large table, Estrella exposes
+SQL All ⭐ Stars transpiles this query into a more complex query against the
+underlying physical schema. On top of this large table, SQL All ⭐ Stars exposes
 a set of metadata tables with all the semantics
 (metrics, dimensions, hierarchies, ...)
 
@@ -40,7 +40,7 @@ from a more dynamic `package.json`) or to a `_meta` meta table in
 a target database.
 
 The dynamic rules you set up, and inferences in the
-Estrella's engine can be fully stamped, versioned and made static to lead
+SQL All ⭐ Stars's engine can be fully stamped, versioned and made static to lead
 to predictable outcomes.
 
 Sources & targets:
@@ -55,24 +55,24 @@ Sources & targets:
 
 In many cases you'll want the semantic layer to be deterministic and static.
 This is how semantic layers typically work. Alternatively, you can
-run Estrella in dynamic mode, point it to a database schema, and let it
+run SQL All ⭐ Stars in dynamic mode, point it to a database schema, and let it
 learn the schema it's working with, and receive hints as to how to behave
 as it goes. In this mode, it'll look up the physical schema, infer possible
 joins, and even receive SQL-like commands to enrichiment as in 
-`INSERT ('table1', 'table2', 'table_1.id = table2.id') INTO estrella.joins;`
+`INSERT ('table1', 'table2', 'table_1.id = table2.id') INTO allstars.joins;`
 
 ## It's driver, not a proxy!
 
-Estrella is **NOT** a service that lives somewhere in between your database
+SQL All ⭐ Stars is **NOT** a service that lives somewhere in between your database
 and your application, it's a Python `dbapi` driver + `sqlalchemy` dialect.
 This means it's **NOT** an external service you need to launch, keep up
 and observe, it's meant to be installed and used as a simple database driver.
 
 What if I'm not in python? well, hoping a community develops and builds
-driver for other languages that interact with Estrella REST service that's
+driver for other languages that interact with SQL All ⭐ Stars REST service that's
 written in Python
 
-# What's in an Estrella semantic layer?
+# What's in an SQL All ⭐ Stars semantic layer?
 
 ## Some internals
 
@@ -83,7 +83,7 @@ representation of
 
 Relations, as pointers to physical **tables** and **views**, including
 the underlying **columns** along with their **data types**. The semantic
-layer is essentially a fancy rich map to get to these things.  Estrella
+layer is essentially a fancy rich map to get to these things.  SQL All ⭐ Stars
 has a full in-memory representation of all this to navigate it all.
 
 ### Joins
@@ -146,7 +146,7 @@ be pointing from `Customer Zone` -> `Customer Country` -> `Customer Region`
 
 Multiple alternate hierarchies can be defined for the sames dimensions,
 and while they generally should be thought of as many-to-one as you go
-down the hierarchy, this is not strickly enforce in Estrella as you
+down the hierarchy, this is not strickly enforce in SQL All ⭐ Stars as you
 may want to enable your users to drill "across" dimensions that don't have
 pure many-to-one relationships.
 

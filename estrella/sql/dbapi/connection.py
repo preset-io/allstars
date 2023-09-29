@@ -4,8 +4,8 @@ An implementation of a DB API 2.0 connection.
 
 from typing import Any, Dict, List, Optional
 
-from estrella.sql.dbapi.cursor import Cursor
-from estrella.sql.dbapi.decorators import check_closed
+from allstars.sql.dbapi.cursor import Cursor
+from allstars.sql.dbapi.decorators import check_closed
 
 
 class Connection:

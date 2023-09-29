@@ -1,4 +1,4 @@
-from estrella.core.base import _SqlExpression
+from allstars.core.base import _SqlExpression
 
 
 class Filter(_SqlExpression):

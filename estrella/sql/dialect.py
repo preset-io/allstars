@@ -14,9 +14,9 @@ from sqlalchemy.engine.url import URL
 from sqlalchemy.sql import compiler
 from sqlalchemy.sql.type_api import TypeEngine
 
-from estrella.sql import dbapi
-from estrella.sql.dbapi.connection import Connection
-from estrella.sql.dbapi.typing import ColumnType
+from allstars.sql import dbapi
+from allstars.sql.dbapi.connection import Connection
+from allstars.sql.dbapi.typing import ColumnType
 
 
 class SQLAlchemyColumn(TypedDict):
@@ -34,7 +34,7 @@ class SQLAlchemyColumn(TypedDict):
 
 def get_sqla_type(type_: ColumnType) -> TypeEngine:
     """
-    Convert from Estrella to SQLA type.
+    Convert from SQL All ⭐ Stars to SQLA type.
     """
     type_map = {
         ColumnType.BYTES: sqlalchemy.types.BINARY,
@@ -54,12 +54,12 @@ def get_sqla_type(type_: ColumnType) -> TypeEngine:
     return type_map[type_]()
 
 
-class EstrellaDialect(DefaultDialect):
+class SQL All ⭐ StarsDialect(DefaultDialect):
     """
-    A SQLAlchemy dialect for Estrella.
+    A SQLAlchemy dialect for SQL All ⭐ Stars.
     """
 
-    name = "estrella"
+    name = "allstars"
     driver = ""
 
     statement_compiler = compiler.SQLCompiler
@@ -173,7 +173,7 @@ class EstrellaDialect(DefaultDialect):
 
     def do_rollback(self, dbapi_connection: Connection) -> None:
         """
-        Estrella doesn't support rollbacks.
+        SQL All ⭐ Stars doesn't support rollbacks.
         """
 
     def get_schema_names(self, connection: SqlaConnection, **kw: Any):

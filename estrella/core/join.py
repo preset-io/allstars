@@ -1,7 +1,7 @@
 from typing import Literal
 from dataclasses import dataclass
 
-from estrella.core.base import Serializable
+from allstars.core.base import Serializable
 
 
 @dataclass

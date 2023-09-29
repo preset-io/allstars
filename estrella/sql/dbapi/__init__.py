@@ -2,8 +2,8 @@
 An implementation of the DB API 2.0.
 """
 
-from estrella.sql.dbapi.connection import connect
-from estrella.sql.dbapi.exceptions import (
+from allstars.sql.dbapi.connection import connect
+from allstars.sql.dbapi.exceptions import (
     DatabaseError,
     DataError,
     Error,
@@ -15,7 +15,7 @@ from estrella.sql.dbapi.exceptions import (
     ProgrammingError,
     Warning,
 )
-from estrella.sql.dbapi.types import (
+from allstars.sql.dbapi.types import (
     BINARY,
     DATETIME,
     NUMBER,

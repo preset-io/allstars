@@ -6,15 +6,15 @@ from typing import Any, List, Literal, Optional
 from dataclasses import dataclass, field, asdict
 from itertools import combinations
 
-from estrella.core.relation import Column, Relation
-from estrella.core.base import Serializable, SerializableCollection
-from estrella.core.hierarchy import Hierarchy
-from estrella.core.metric import Metric
-from estrella.core.dimension import Dimension
-from estrella.core.filter import Filter
-from estrella.core.folder import Folder
-from estrella.core.query_context import QueryContext
-from estrella.core.join import Join
+from allstars.core.relation import Column, Relation
+from allstars.core.base import Serializable, SerializableCollection
+from allstars.core.hierarchy import Hierarchy
+from allstars.core.metric import Metric
+from allstars.core.dimension import Dimension
+from allstars.core.filter import Filter
+from allstars.core.folder import Folder
+from allstars.core.query_context import QueryContext
+from allstars.core.join import Join
 
 
 @dataclass

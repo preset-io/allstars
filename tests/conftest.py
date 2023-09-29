@@ -8,7 +8,7 @@ from sqlalchemy.engine import Engine
 @pytest.fixture
 def engine() -> Engine:
     """
-    Create an Estrella DB on top of SQLite.
+    Create an SQL All ⭐ Stars DB on top of SQLite.
     """
     os.unlink("test.db")
     engine = create_engine("sqlite:///test.db")

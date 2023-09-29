@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List
-from estrella.core.dimension import Dimension
+from allstars.core.dimension import Dimension
 
 
 @dataclass

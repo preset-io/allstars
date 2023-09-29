@@ -5,11 +5,11 @@ Decorators for the DB API 2.0 implementation.
 from functools import wraps
 from typing import TYPE_CHECKING, Any, Callable, TypeVar, Union, cast
 
-from estrella.sql.dbapi.exceptions import ProgrammingError
+from allstars.sql.dbapi.exceptions import ProgrammingError
 
 if TYPE_CHECKING:
-    from estrella.sql.dbapi.connection import Connection
-    from estrella.sql.dbapi.cursor import Cursor
+    from allstars.sql.dbapi.connection import Connection
+    from allstars.sql.dbapi.cursor import Cursor
 
 
 METHOD = TypeVar("METHOD", bound=Callable[..., Any])

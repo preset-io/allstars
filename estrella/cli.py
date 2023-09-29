@@ -1,7 +1,7 @@
 import click
 from sqlalchemy import create_engine
 
-from estrella.core.project import Project
+from allstars.core.project import Project
 
 
 @click.group()

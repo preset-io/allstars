@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.engine import Engine
 
-from estrella.sql.transpile import transpile
+from allstars.sql.transpile import transpile
 
 
 @pytest.mark.parametrize(

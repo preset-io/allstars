@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 import os
 
-from estrella import config
-from estrella.core.semantic_layer import SemanticLayer
-from estrella.database_interface import DatabaseInterface
+from allstars import config
+from allstars.core.semantic_layer import SemanticLayer
+from allstars.database_interface import DatabaseInterface
 
 
 class Project:
