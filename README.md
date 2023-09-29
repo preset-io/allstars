@@ -1,4 +1,4 @@
-# Estrella 
+# SQL All⭐Stars 
 
 <img width=250 src="https://github.com/preset-io/estrella/assets/487433/f06094ef-043f-40b5-b231-115c8621e97b">
 
