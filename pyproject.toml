@@ -1,5 +1,5 @@
 [project]
-name = "estrella"
+name = "allstars"
 version = "0.0.1"
 description = "A Mostly Inferred + Progressively Adoptable Semantic Layer"
 readme = "README.md"
@@ -11,20 +11,20 @@ dependencies = [
     "pydantic",
 ]
 requires-python = ">3.7"
-scripts = {estrella = "estrella.cli:run"}
+scripts = {allstars = "allstars.cli:run"}
 
 [project.urls]
-homepage = "https://github.com/preset-io/estrella"
-Changelog = "https://github.com/preset-io/estrella/releases"
-Issues = "https://github.com/preset-io/estrella/issues"
-CI = "https://github.com/preset-io/estrella/actions"
+homepage = "https://github.com/preset-io/allstars"
+Changelog = "https://github.com/preset-io/allstars/releases"
+Issues = "https://github.com/preset-io/allstars/issues"
+CI = "https://github.com/preset-io/allstars/actions"
 
 [project.optional-dependencies]
 test = ["pytest"]
 dev = ["Flake8-pyproject"]
 
 [project.entry-points."sqlalchemy.dialects"]
-estrella = "estrella.sql.dialect:EstrellaDialect"
+allstars = "allstars.sql.dialect:allstarsDialect"
 
 [tool.flake8]
 max-line-length = 90
