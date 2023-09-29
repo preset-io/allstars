@@ -5,79 +5,132 @@
 
 ## An Inferred, Progressively Adoptable Semantic Layer
 
-This project introduces a new semantic layer that’s
-primarily inferred from a
-physical database schema, enabling automatic and intelligent interpretation
-of database relationships. While a substantial amount of information can
-be derived from the physical schema, our approach allows for
-augmentation where needed, handling ambiguous cases, and progressive
-enrichment over time using either yaml or as code.
+SQL All ⭐ Stars is a smart semantic layer that takes a new approach:
 
+- **mostly inferred:** it looks at your physical schema and makes
+  educated guesses around your semantics (joins, metrics, dimensions,
+  hierarchies)
+- **progressively enrichable:** building on it's inferences, you can
+  curate, enrich and rewire things as needed at your own pace. It's useful
+  on day 0, and becomes more useful as you extend the semantics.
+- **served as a virtual database:** it exposes itself primarily
+  as a simple database, as one or many collections of flat tables. This
+  means it's universally adopted by anything that can talk to a database.
+  Under the hood, allstars takes your simple SQL against those wide tables,
+  and transpiles the SQL into more complex SQL doing the joining, the
+  union-ing and whatever else is needed to get to your data
+- **RESTful too:** get all the JSONs you need here too, allowing deeper
+  integrations beyond the virtual database
+- **100% open:** unlike a lot of semantic layers that are tightly coupled
+  with some BI tool, this is 100% open and self-standing
 
 ## Served as a virtual database
 
+```sql
+SELECT customer_name, SUM(units_sold), SUM(pre_orders)
+FROM ⭐
+GROUP BY ⭐;
+```
 Something that's novel about SQL All ⭐ Stars is the idea of exposing this
-semantic layer primarily as a virtual database. This shows as one
-very large table exposing essentially all of the columns in your semantic
-layer. While you run very simple SQL against that large table,
-SQL All ⭐ Stars transpiles this query into a more complex query against the
-underlying physical schema. On top of this large table, SQL All ⭐ Stars exposes
+semantic layer primarily as a virtual database. This shows as a
+one or many wide tables exposing essentially all of the columns in your semantic
+layer. While you or your BI tool run very simple SQL against a large table,
+allstars transpiles this query into a more complex query against the
+underlying physical schema.
+
+```sql
+SELECT ⭐ FROM ⭐.metrics;
+SELECT ⭐ FROM ⭐.dimensions;
+SELECT ⭐ FROM ⭐.hierachies;
+SELECT ⭐ FROM ⭐.tables;
+{{ #... }}
+```
+
+On top of these large tables, allstars exposes
 a set of metadata tables with all the semantics
 (metrics, dimensions, hierarchies, ...)
+
+If you are curious as to how it works, the TLDR is
+that it's implemented as a dbapi driver
+in Python that acts as a bit of a proxy in front of your database.
 
 ## RESTfull of itself
 
 If the virtual database doesn't suit your needs, a RESTful API is also
-exposed .... [TO BE COMPLETED LATER]
+exposed. Comprehensive calls to extract and alter semantics, transpile SQL,
+sync different sources and targets, and much more.
 
 ## Compiled, serialized, versioned and broadcastable
 
-Our engine makes inferences based on your physical schema, naming
-conventions and enrichment as yaml or code, it "compiles" all this
-to a static, deterministic model, that can be pushed to the file system
-for source control (similar to how npm's `package-lock.json` is derived
-from a more dynamic `package.json`) or to a `_meta` meta table in
-a target database.
+allstars makes inferences based on your physical schema, naming
+conventions and can "compiles" all this
+to a static, deterministic model that can be pushed to the file system
+for source control, or to a database for driver retrieval.
 
-The dynamic rules you set up, and inferences in the
-SQL All ⭐ Stars's engine can be fully stamped, versioned and made static to lead
-to predictable outcomes.
+Some expected workflows around creating, enriching and updating your
+semantics:
+- **first inference:** where allstars extracts your physical models, infers
+  your joins and populates dimensions and metrics
+- **mechanics enrichment:** where a data engineer or analyst engineer will add new
+  objects, add join criterias that could not be detected, and creates some
+  rich, relevant dimensions and metrics
+- **presentation erichment:** add nice labels, descriptions and slap a folder
+  structure around all your metrics, dimensions and hierarchies
+- **update:** your schemas have evolved, new tables and column created, time to
+  `allstars extract` the latest changes in your schema to keep things up-to-date
+   
 
-Sources & targets:
+As you progressively make these changes,
+they are all "compiled", versioned and made static to serve
+predictable outcomes.
+
+### Sources & targets:
+
+#### at launch
 * the filesystem as a set of human readable yaml files
+* API/DSL: if yaml is too verbose and you need something more dynamic,
+  you can use the python objects directly, and compile to yaml
 * a database, where the content is serialized into a `_meta` table
-* source-only: a git repo+ref, so that you can load up directly from a uri
-* zip file: similiar to filesystem
+
+#### future
+* a git repo+ref, so that the driver can load up directly from a uri
 * a REST service
-* s3://
+* s3://artifact.zip
 
 ## A Dynamic mode
 
 In many cases you'll want the semantic layer to be deterministic and static.
-This is how semantic layers typically work. Alternatively, you can
-run SQL All ⭐ Stars in dynamic mode, point it to a database schema, and let it
+This is how semantic layers typically work.
+
+Alternatively, you can
+run allstars in dynamic mode, point it to a database schema, and let it
 learn the schema it's working with, and receive hints as to how to behave
 as it goes. In this mode, it'll look up the physical schema, infer possible
-joins, and even receive SQL-like commands to enrichiment as in 
-`INSERT ('table1', 'table2', 'table_1.id = table2.id') INTO allstars.joins;`
+joins, and even receive SQL-like commands to enrichment as in 
+
+```sql
+INSERT ('table1', 'table2', 'table_1.id = table2.id') INTO ⭐.joins;
+INSERT ('Order Count', 'COUNT(DISTINCT order_id)', 'orders') INTO ⭐.metrics;
+```
 
 ## It's driver, not a proxy!
 
-SQL All ⭐ Stars is **NOT** a service that lives somewhere in between your database
+allstars is **NOT** a service that lives somewhere in between your database
 and your application, it's a Python `dbapi` driver + `sqlalchemy` dialect.
 This means it's **NOT** an external service you need to launch, keep up
-and observe, it's meant to be installed and used as a simple database driver.
+and observe, it's meant to be installed and used as a simple database driver
+and won't delay or buffer your queries.
 
 What if I'm not in python? well, hoping a community develops and builds
-driver for other languages that interact with SQL All ⭐ Stars REST service that's
-written in Python
+driver for other languages that interact with allstars REST service that's
+written in Python.
 
-# What's in an SQL All ⭐ Stars semantic layer?
+# What's in an allstars semantic layer?
 
 ## Some internals
 
 Opening up the hood, the semantic layer has the following internal
-representation of
+representation ->
 
 ### Relations
 
@@ -181,9 +234,6 @@ conventions augments these semantics even more.
 
 - looking at numerical column names, it may make sense to create some `SUM(amount)` `SUM(quantity)`
 
-### Inferring other stuff?
-
-- How do we store user-defined metrics?
 
 ## Premise #2 Even more can be inferred from a query corpus
 
@@ -195,12 +245,7 @@ conventions augments these semantics even more.
 
 The tool could have a feature something that reads through valid SQL and suggests augmentation of the semantic layer based on query pattern. Probably AI-based.
 
-## Premise #3 A smart CLI could ask you to clarify ambiguous things
-
-- not sure what to join on? ask the admin
-- low confidence suggestions? ask the user
-
-## Premise #4 You can enrich things over time
+## Premise #3 You can enrich things over time
 
 - Business metadata is not vital, and often takes a moment to settle, let’s put in pretty label, pretty description, fancy folders structures when we get there
 - Hierarchies are nice but we can do without as we start
@@ -208,49 +253,11 @@ The tool could have a feature something that reads through valid SQL and suggest
 - Aggregate awareness semantics aren’t vital
 - …
 
-# Proposition - Let’s build a semantic layer that’s mostly inferred from the physical schema, and can be progressively augmented over time.
+### Some mechanics:
 
-## Proposed Mechanics - a virtual database
-
-The main interface exposed to the user here is a virtual database that look likes a normal database. By default the API is SQL and a set of **virtual** data tables and metadata tables. Querying those tables transpiles the query to the more complex underlying physical model and/or the supporting metadata in memory 
-
-### Inputs
-
-- **a pointer to a database schema:** by default, this is all that’s needed to work, assume decent naming conventions and inferable schemas, this should work just fine by itself
-- Augment it! extra metadata in the form of yaml files or DSL
-    - joins (how individual schemas in the table should be joined)
-    - contexts (inspired by Business Objects): define which joins can / cannot be used in combination.
-    - metrics: them aggregate expressions
-        - fancy stuff - V2 (not MVP)
-            - metrics can refer to multiple columns from multiple tables, reference other metrics
-            - meta-metrics can be defined, bookings can be defined on top of multiple tables `agg_bookings` and `fact_bookings`, and this engine knows how to pick the cheaper one to use
-    - reusable filters
-    - hierarchies as tuple of dims
-    - hide tables/columns
-    - folder structure defining how to expose objects
-
-### Outputs - A set of Virtual Table
-
-- `super`: A fat, wide virtual table that exposes ALL COLUMNS as one big table.
-    - syntactic sugar! 🙂 `FROM *`:  `SELECT country_name, COUNT(DISTINCT customer_id) **FROM *** GROUP BY customer_name`
-- `context.{context_name}` showing a subset of columns that can be joined together
-- A virtual `meta` schema to
-    - `meta.metrics`
-    - `meta.objects`
-    - `meta.dimensions`
-    - `meta.hierarchies`
-
-### Mechanics:
-
-- When querying a virtual table like `super` , we read the SQL and transpile it into a proper plan
+- the driver has the whole semantic model in-memory
+- When querying a virtual table like `FROM ⭐` , we read the SQL and transpile it into a proper SQL that can run against the physical model
 - When querying metadata, serve the model straight from memory
-
-### “Compiling” + caching
-
-Ok so there’s a lot of inferences that happen based on the physical schema, but probably should be inferred by the engine on the fly at each query. It feels like we need a step to combine the inferences based on the physical model and the augmentation and mix them things into a materialized, serialized, cached, versioned semantic layer.
-
-Maybe things are pushed into a private `_meta` table in the physical schema itself, stamped, versioned, accessible, …
-
 ```sql
 CREATE TABLE _meta AS (
   git_sha STRING,
@@ -259,12 +266,6 @@ CREATE TABLE _meta AS (
   json_blob STRING,
 );
 ```
-
-Think of the content of this table as a serialized, deterministic full version of this semantic layer.
-
-Oh! Maybe there’s also a way to compile an extended static/serialized version of this (similar to how `package.json` can generate a `package-lock.json` that can optionally be checked into the repo and materialized and diffed at each PR).
-
-In this serialized version of the semantic layer, **everything that’s being inferred is SPELLED OUT**, meaning you’ll be able to actually see how tables will be joined, what metrics are inferred, …
 
 ### Implementation
 
@@ -275,46 +276,9 @@ Proposed implementation is in python as a dbapi driver + sqlalchemy dialect.
 
 # So what’s in the repo?
 
-How are things semantically defined?
+See some examples here ->
+https://github.com/preset-io/allstars/tree/master/examples/
 
-## “targets” (aka environment) semantics
-
-dbt has this notion of targets (environments) and it’s pretty vital. A place where you can define dev/staging/prod and what they point to. For dbt it’s in `.dbt/profiles.yaml` but you can override and such. We need that. Maybe our targets are dbt-compatible? 🙂 dbt inspired?
-
-a set of yaml files? templated? 
-
-```bash
-	repo/
-  project.yaml # similar to dbt_project, high level configs
-
-  # enriching semantics
-  joins.yaml
-  metrics.yaml
-  dimensions.yaml
-  contexts.yaml
-  ...
-
-  ## alternatively or complementarilly objects can be defined as code
-  joins.py
-  metrics.py
-  ...
-
-  ## this is dynamically generated by the CLI, can be checked in or not
-  compiled/ 
-    ## storing the physical representation of all the tables in the input schema
-    physical/
-      dim_customers.yaml
-      dim_time.yaml
-      fact_sales.yaml
-    ## semantics, mixing the inferred + enriched stuff
-    joins.yaml
-    metrics.yaml
-    dimensions.yaml
-    contexts.yaml
-   
-```
-
-Read the content of `**/*.yaml` and merge all that into a big semantic layer object?
 
 ## A CLI
 
