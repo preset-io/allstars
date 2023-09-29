@@ -123,7 +123,6 @@ class _SqlExpression(MenuItem):
 
 
 class SerializableCollection(dict, Serializable):
-
     def __init__(self, l: list = None):
         l = l or []
         for o in l:

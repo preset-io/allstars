@@ -11,7 +11,7 @@ def cli():
 
 @click.command()
 @click.argument("schema")
-@click.option('--overwrite', is_flag=True, help='Overwrite existing files.')
+@click.option("--overwrite", is_flag=True, help="Overwrite existing files.")
 def extract(schema, overwrite):
     click.echo(f"Extracting metadata from schema: {schema}")
 
@@ -25,6 +25,7 @@ def extract(schema, overwrite):
 
     extracted_project.flush()
 
+
 @click.command()
 @click.option("--key", default=None)
 def read(key):
@@ -33,6 +34,7 @@ def read(key):
     sl = project.semantic_layer
 
     print(sl.to_yaml(key=key))
+
 
 @click.command()
 @click.argument("sql")

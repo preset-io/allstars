@@ -22,16 +22,30 @@ from estrella.core.join import Join
 @dataclass
 class SemanticLayer(Serializable):
     # Menu items, things users will interact with
-    metrics: SerializableCollection[Metric] = field(default_factory=SerializableCollection)
-    folders: SerializableCollection[Folder] = field(default_factory=SerializableCollection)
-    dimensions: SerializableCollection[Dimension] = field(default_factory=SerializableCollection)
+    metrics: SerializableCollection[Metric] = field(
+        default_factory=SerializableCollection
+    )
+    folders: SerializableCollection[Folder] = field(
+        default_factory=SerializableCollection
+    )
+    dimensions: SerializableCollection[Dimension] = field(
+        default_factory=SerializableCollection
+    )
 
     # Internals
-    relations: Optional[SerializableCollection[Relation]] = field(default_factory=SerializableCollection)
+    relations: Optional[SerializableCollection[Relation]] = field(
+        default_factory=SerializableCollection
+    )
     joins: SerializableCollection[Join] = field(default_factory=SerializableCollection)
-    query_contexts: SerializableCollection[QueryContext] = field(default_factory=SerializableCollection)
-    filters: SerializableCollection[Filter] = field(default_factory=SerializableCollection)
-    hierarchies: SerializableCollection[Hierarchy] = field(default_factory=SerializableCollection)
+    query_contexts: SerializableCollection[QueryContext] = field(
+        default_factory=SerializableCollection
+    )
+    filters: SerializableCollection[Filter] = field(
+        default_factory=SerializableCollection
+    )
+    hierarchies: SerializableCollection[Hierarchy] = field(
+        default_factory=SerializableCollection
+    )
 
     def create_relation(self, name, relation_type, columns, schema):
         return Relation(
@@ -60,9 +74,7 @@ class SemanticLayer(Serializable):
         for name, relation_type in rels:
             print((name, relation_type))
             columns = inspector.get_columns(name, schema=schema)
-            relations.append(
-                self.create_relation(name, relation_type, columns, schema)
-            )
+            relations.append(self.create_relation(name, relation_type, columns, schema))
         self.relations = SerializableCollection(relations)
 
         self.infer_joins()
@@ -90,7 +102,6 @@ class SemanticLayer(Serializable):
 
     @classmethod
     def from_folder(cls, folder_path=None):
-
         # Relations
         rel_folder = os.path.join(folder_path, "relations")
         yaml_files = glob.glob(f"{rel_folder}/*.yaml")
@@ -108,7 +119,9 @@ class SemanticLayer(Serializable):
 
         # Dimensions
         f = os.path.join(folder_path, "dimensions.yaml")
-        dimensions = SerializableCollection.from_yaml_file(f, Dimension, key="dimensions")
+        dimensions = SerializableCollection.from_yaml_file(
+            f, Dimension, key="dimensions"
+        )
 
         # Folders
         f = os.path.join(folder_path, "folders.yaml")
@@ -127,7 +140,7 @@ class SemanticLayer(Serializable):
 
     def upsert(self, semantic_layer):
         """Insert new keys and update existing ones"""
-        for collection in ['relations', 'metrics', 'dimensions']:
+        for collection in ["relations", "metrics", "dimensions"]:
             d1 = getattr(self, collection)
             d2 = getattr(semantic_layer, collection)
             d1.upsert(d2)
