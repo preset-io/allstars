@@ -64,9 +64,10 @@ class Serializable:
         return cls.from_dict(data)
 
     @classmethod
-    def from_yaml_file(cls, filename: str):
+    def from_yaml_file(cls, filename: str, verbose: bool = True):
         """Creates an instance of the class from a YAML file, excluding properties."""
         with open(filename, "r") as file:
+            print(f"Loading file {filename}")
             data = yaml.load(file, Loader=yaml.FullLoader)
         return cls.from_dict(data)
 

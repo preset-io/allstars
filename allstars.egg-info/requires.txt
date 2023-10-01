@@ -1,0 +1,7 @@
+pydantic
+
+[dev]
+Flake8-pyproject
+
+[test]
+pytest

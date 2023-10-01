@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 from typing import Literal, List
 
-from allstars.core.base import Serializable
+from allstars.core.base import Serializable, SerializableCollection
 from allstars.core.join import Join
 
 
 @dataclass
 class Column(Serializable):
+    key: str
     name: str
     data_type: str
 
@@ -18,7 +19,7 @@ class Relation(Serializable):
     # the view_name or table_name
     reference: str
     relation_type: Literal["view", "table"]
-    columns: List[Column]
+    columns: SerializableCollection[Column]
 
     include_count_metric: bool = True
     include_columns_as_dimensions: bool = True
@@ -35,7 +36,7 @@ class Relation(Serializable):
                 matches.append(c)
         return matches
 
-    def gen_join(self, relation, columns: list):
+    def gen_join(self, relation, columns: SerializableCollection):
         col_names = [c.name for c in columns]
         criteria = " AND ".join(
             [f"{self.key}.{c} = {relation.key}.{c}" for c in col_names]

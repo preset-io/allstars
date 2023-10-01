@@ -1,0 +1,5 @@
+[console_scripts]
+allstars = allstars.cli:run
+
+[sqlalchemy.dialects]
+allstars = allstars.sql.dialect:allstarsDialect

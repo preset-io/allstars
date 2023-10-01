@@ -11,4 +11,3 @@ class DatabaseInterface:
 
     def get_df(self, sql):
         """get a dataframe!"""
-

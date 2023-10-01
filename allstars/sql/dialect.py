@@ -34,7 +34,7 @@ class SQLAlchemyColumn(TypedDict):
 
 def get_sqla_type(type_: ColumnType) -> TypeEngine:
     """
-    Convert from SQL All ⭐ Stars to SQLA type.
+    Convert from allstars to SQLA type.
     """
     type_map = {
         ColumnType.BYTES: sqlalchemy.types.BINARY,

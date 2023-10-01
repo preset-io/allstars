@@ -49,14 +49,18 @@ class SemanticLayer(Serializable):
         return Relation(
             database_schema=schema,
             reference=name,
-            columns=[
-                Column(name=col["name"], data_type=str(col["type"])) for col in columns
-            ],
+            columns=SerializableCollection(
+                [
+                    Column(
+                        key=col["name"], name=col["name"], data_type=str(col["type"])
+                    )
+                    for col in columns
+                ]
+            ),
             relation_type=relation_type,
         )
 
     def load_relations_from_schema(self, schema, db):
-
         # get all table names in the specified schema
         tables = db.inspector.get_table_names(schema=schema)
 
