@@ -1,9 +1,9 @@
 from os import environ
 
 config_defaults = {
-    "ESTRELLA_FOLDER": "/tmp/allstars",
-    "ESTRELLA_SQLA_CONN": "mysql://",
-    "ESTRELLA_PROJECT": "jaffleshop",
+    "ALLSTARS_FOLDER": "/tmp/allstars",
+    "ALLSTARS_SQLA_CONN": "mysql://",
+    "ALLSTARS_PROJECT": "jaffleshop",
 }
 
 for k in config_defaults.keys():

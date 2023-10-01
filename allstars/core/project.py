@@ -10,8 +10,8 @@ class Project:
     semantic_layer: SemanticLayer
 
     def __init__(self, folder=None, sqla_conn=None, *args, **kwargs):
-        self.folder = folder or config.ESTRELLA_FOLDER
-        self.sqla_conn = sqla_conn or config.ESTRELLA_SQLA_CONN
+        self.folder = folder or config.ALLSTARS_FOLDER
+        self.sqla_conn = sqla_conn or config.ALLSTARS_SQLA_CONN
 
         self.db = DatabaseInterface(self.sqla_conn)
 

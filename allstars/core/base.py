@@ -60,7 +60,11 @@ class Serializable:
     @classmethod
     def from_yaml(cls, yaml_string: str):
         """Creates an instance of the class from a YAML string, excluding properties."""
-        data = yaml.load(yaml_string, Loader=yaml.FullLoader)
+        data = None
+        try:
+            data = yaml.load(yaml_string, Loader=yaml.FullLoader)
+        except:
+            pass
         return cls.from_dict(data)
 
     @classmethod
@@ -140,12 +144,17 @@ class SerializableCollection(dict, Serializable):
     @classmethod
     def from_yaml_file(cls, filename: str, object_class: Serializable, key: str = None):
         """Creates an instance of the class from a YAML file, excluding properties."""
-        with open(filename, "r") as file:
-            data = yaml.load(file, Loader=yaml.FullLoader)
-        if key:
+        data = None
+        try:
+            with open(filename, "r") as file:
+                data = yaml.load(file, Loader=yaml.FullLoader)
+        except:
+            pass
+        if key and data:
             data = data.get(key)
-        objects = [object_class.from_dict(o) for o in data]
-        return cls(objects)
+        if data:
+            data = [object_class.from_dict(o) for o in data]
+        return cls(data)
 
     def append(self, obj):
         self[obj.key] = obj
