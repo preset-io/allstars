@@ -149,6 +149,14 @@ What if I'm not in python? well, hoping a community develops and builds
 driver for other languages that interact with allstars REST service that's
 written in Python.
 
+It's also very likely that someone will want to host allstars as a proxy
+service to a database. There's probably an `allstar-dbproxy` project in the
+future of `allstars`.
+
+As `allstars` becomes more popular, decoupling the specificiation from the
+python implementation will become important, using something like protobufs
+to define the object schemas and share them across languages.
+
 # What's in an allstars semantic layer?
 
 ## Some internals
@@ -236,7 +244,6 @@ and presented to the user. Each folder has a key, label and description.
 Filters are simple, reusable, labeled, documented filters. This is not
 commonly used and is generally reserved for filters that involve
 complex logic (think subquery) and are used and reused. 
-
 
 
 # Premises
