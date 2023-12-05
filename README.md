@@ -2,6 +2,10 @@
 
 <img width=600 src="https://github.com/preset-io/estrella/assets/487433/390e73c4-f99b-4912-a6b2-830b0b9a0375">
 
+> :warning: **WIP**: unfinished project. Shared for the value of the
+> ideas exposed here.
+> Let us know if you're
+> interested in teaming up or using the ideas shared here.
 
 ## A Smart & Progressive Semantic Layer
 
