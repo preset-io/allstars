@@ -49,6 +49,21 @@ Without getting too deep in the mechanics, there's one large table to rule
 them all (the "superstar" ⭐ table), and one table per "query context",
 representing sets of tables that can be joined together to answer queries.
 
+If you are familiar with
+[dimensional modeling](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/)
+and [star schemas](https://en.wikipedia.org/wiki/Star_schema), 
+you can think of a "query context" as a specific star within a collection of star schemas.
+If you expose multiple star schemas within your semantic layer, you'll typically have
+one query context per star schema, and each one will be exposed as a virtual table.
+
+Now about that "superstar" ⭐ table, what happens if you try to use metrics and dimensions
+that are unrelated (in different query contexts)? Well SQL Allstars will simply return a clear
+error message at in "The metric [inventory] cannot be joined with [customer.name]".
+
+On top of these large tables, allstars exposes
+a set of metadata tables with all the semantics
+(metrics, dimensions, hierarchies, ...)
+
 ```sql
 SELECT ⭐ FROM ⭐.metrics;
 SELECT ⭐ FROM ⭐.dimensions;
@@ -57,15 +72,11 @@ SELECT ⭐ FROM ⭐.tables;
 {{ #... }}
 ```
 
-On top of these large tables, allstars exposes
-a set of metadata tables with all the semantics
-(metrics, dimensions, hierarchies, ...)
+If you are curious as to how it works behind the scene, the TLDR is
+that SQL Allstars is implemented as a [Python dbapi](https://peps.python.org/pep-0249/)
+driver that acts as a bit of a proxy in front of your database.
 
-If you are curious as to how it works, the TLDR is
-that it's implemented as a dbapi driver
-in Python that acts as a bit of a proxy in front of your database.
-
-## Sweet synthtactic sugar
+## Sweet synthactic sugar
 
 As a "transpiler with context" allstars can allow you to sprinkle some sugar
 in your SQL. Let's get ahead of ANSI SQL and implement things. Ideas
